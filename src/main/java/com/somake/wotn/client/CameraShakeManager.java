@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.somake.wotn.network.CameraShakePayload;
+import com.somake.wotn.entity.GroundWaveEntity;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
@@ -50,12 +51,8 @@ public final class CameraShakeManager {
     }
 
     public static void onCameraAngles(ViewportEvent.ComputeCameraAngles event) {
-        if (ACTIVE_SHAKES.isEmpty()) {
-            return;
-        }
-
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.player == null) {
+        if (minecraft.player == null || minecraft.level == null) {
             return;
         }
 
@@ -78,6 +75,26 @@ public final class CameraShakeManager {
             pitchOffset += Mth.sin(time * 2.75F + shake.phase) * amplitude * 7.0F;
             yawOffset += Mth.sin(time * 3.65F + shake.phase * 1.7F) * amplitude * 4.5F;
             rollOffset += Mth.sin(time * 3.1F + shake.phase * 2.3F) * amplitude * 3.0F;
+        }
+
+        for (GroundWaveEntity wave : minecraft.level.getEntitiesOfClass(GroundWaveEntity.class,
+                minecraft.player.getBoundingBox().inflate(22.0D), entity -> !entity.isSubmerging())) {
+            double distance = cameraPosition.distanceTo(wave.position());
+            float radius = 12.0F + wave.getVisualIntensity() * 8.0F;
+            if (distance >= radius) {
+                continue;
+            }
+            float proximity = 1.0F - Mth.clamp((float) (distance / radius), 0.0F, 1.0F);
+            proximity *= proximity;
+            float amplitude = (0.008F + wave.getVisualIntensity() * 0.022F) * proximity;
+            if (wave.isAnticipatingEmergence()) {
+                amplitude *= 1.75F;
+            }
+            float time = wave.tickCount + partialTick;
+            float phase = wave.getVariantSeed() * 0.017F;
+            pitchOffset += Mth.sin(time * 1.9F + phase) * amplitude * 6.0F;
+            yawOffset += Mth.sin(time * 1.45F + phase * 1.3F) * amplitude * 3.0F;
+            rollOffset += Mth.sin(time * 1.65F + phase * 1.7F) * amplitude * 4.0F;
         }
 
         event.setPitch(event.getPitch() + Mth.clamp(pitchOffset, -8.0F, 8.0F));

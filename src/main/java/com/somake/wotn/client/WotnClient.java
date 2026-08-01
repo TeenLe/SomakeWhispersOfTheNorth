@@ -2,7 +2,11 @@ package com.somake.wotn.client;
 
 import com.somake.wotn.WhispersOfTheNorth;
 import com.somake.wotn.client.particle.ImpactRingParticle;
+import com.somake.wotn.client.renderer.FenrirRenderer;
 import com.somake.wotn.client.renderer.GolemRenderer;
+import com.somake.wotn.client.renderer.GroundWaveRenderer;
+import com.somake.wotn.client.renderer.StoneSlimeRenderer;
+import com.somake.wotn.client.sound.GroundWaveSoundManager;
 import com.somake.wotn.network.CameraShakePayload;
 import com.somake.wotn.registry.ModEntities;
 import com.somake.wotn.registry.ModParticles;
@@ -23,10 +27,14 @@ public final class WotnClient {
         modEventBus.addListener(this::registerClientPayloadHandlers);
         NeoForge.EVENT_BUS.addListener(CameraShakeManager::onClientTick);
         NeoForge.EVENT_BUS.addListener(CameraShakeManager::onCameraAngles);
+        NeoForge.EVENT_BUS.addListener(GroundWaveSoundManager::onClientTick);
     }
 
     private void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.GOLEM.get(), GolemRenderer::new);
+        event.registerEntityRenderer(ModEntities.STONE_SLIME.get(), StoneSlimeRenderer::new);
+        event.registerEntityRenderer(ModEntities.GROUND_WAVE.get(), GroundWaveRenderer::new);
+        event.registerEntityRenderer(ModEntities.FENRIR.get(), FenrirRenderer::new);
     }
 
     private void registerParticleProviders(RegisterParticleProvidersEvent event) {

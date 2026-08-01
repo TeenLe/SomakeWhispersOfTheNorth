@@ -10,5 +10,7 @@ public final class ModEntityEvents {
 
     public static void registerAttributes(EntityAttributeCreationEvent event) {
         event.put(ModEntities.GOLEM.get(), GolemEntity.createAttributes().build());
+        event.put(ModEntities.STONE_SLIME.get(), StoneSlimeEntity.createAttributes().build());
+        event.put(ModEntities.FENRIR.get(), FenrirEntity.createAttributes().build());
     }
 }

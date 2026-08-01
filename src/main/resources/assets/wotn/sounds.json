@@ -1,0 +1,15 @@
+{
+  "ground_slam": {
+    "sounds": [
+      "wotn:ground_slam"
+    ]
+  },
+  "fenrir_underground_moving": {
+    "sounds": [
+      {
+        "name": "wotn:fenrir_underground_moving",
+        "stream": true
+      }
+    ]
+  }
+}

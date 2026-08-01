@@ -1,7 +1,10 @@
 package com.somake.wotn.registry;
 
 import com.somake.wotn.WhispersOfTheNorth;
+import com.somake.wotn.entity.FenrirEntity;
 import com.somake.wotn.entity.GolemEntity;
+import com.somake.wotn.entity.GroundWaveEntity;
+import com.somake.wotn.entity.StoneSlimeEntity;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -17,6 +20,26 @@ public final class ModEntities {
                     .eyeHeight(2.9F)
                     .clientTrackingRange(10)
                     .updateInterval(3));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<StoneSlimeEntity>> STONE_SLIME = ENTITY_TYPES.registerEntityType("stone_slime", StoneSlimeEntity::new, MobCategory.MONSTER,
+            builder -> builder
+                    .sized(1.35F, 1.15F)
+                    .eyeHeight(0.72F)
+                    .clientTrackingRange(8)
+                    .updateInterval(3));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<GroundWaveEntity>> GROUND_WAVE = ENTITY_TYPES.registerEntityType("ground_wave", GroundWaveEntity::new, MobCategory.MISC,
+            builder -> builder
+                    .sized(7.0F, 1.0F)
+                    .clientTrackingRange(12)
+                    .updateInterval(1));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<FenrirEntity>> FENRIR = ENTITY_TYPES.registerEntityType("fenrir", FenrirEntity::new, MobCategory.MONSTER,
+            builder -> builder
+                    .sized(2.2F, 2.3F)
+                    .eyeHeight(1.85F)
+                    .clientTrackingRange(16)
+                    .updateInterval(2));
 
     private ModEntities() {
     }

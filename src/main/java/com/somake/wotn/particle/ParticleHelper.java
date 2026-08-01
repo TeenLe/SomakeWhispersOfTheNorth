@@ -12,6 +12,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 public final class ParticleHelper {
     private ParticleHelper() {
@@ -131,6 +132,64 @@ public final class ParticleHelper {
             } else {
                 level.addParticle(debris, px, y + 0.15D, pz, motionX, motionY, motionZ);
             }
+        }
+    }
+
+    public static void spawnExpandingGroundDebris(Level level, double x, double y, double z,
+            float waveRadius, int count, float outwardStrength) {
+        int particleCount = Math.max(1, count);
+        float angleOffset = level.getRandom().nextFloat() * Mth.TWO_PI;
+        for (int i = 0; i < particleCount; i++) {
+            float angle = angleOffset + Mth.TWO_PI * i / particleCount
+                    + (level.getRandom().nextFloat() - 0.5F) * 0.28F;
+            float radiusJitter = 0.82F + level.getRandom().nextFloat() * 0.36F;
+            double directionX = Mth.sin(angle);
+            double directionZ = Mth.cos(angle);
+            double px = x + waveRadius * radiusJitter * directionX;
+            double pz = z + waveRadius * radiusJitter * directionZ;
+            BlockPos hitPos = BlockPos.containing(px, y, pz);
+            BlockState blockState = level.getBlockState(hitPos.below());
+            if (blockState.getRenderShape() == RenderShape.INVISIBLE) {
+                continue;
+            }
+
+            ParticleOptions debris = new BlockParticleOption(ParticleTypes.BLOCK, blockState);
+            double horizontalSpeed = outwardStrength * (0.75D + level.getRandom().nextDouble() * 0.5D);
+            double motionX = directionX * horizontalSpeed + level.getRandom().nextGaussian() * 0.025D;
+            double motionY = 0.28D + level.getRandom().nextDouble() * 0.38D;
+            double motionZ = directionZ * horizontalSpeed + level.getRandom().nextGaussian() * 0.025D;
+            if (level instanceof ServerLevel serverLevel) {
+                serverLevel.sendParticles(debris, px, y + 0.12D, pz, 0, motionX, motionY, motionZ, 1.0D);
+            } else {
+                level.addParticle(debris, px, y + 0.12D, pz, motionX, motionY, motionZ);
+            }
+        }
+    }
+
+    public static void spawnGroundWaveTrail(Level level, BlockState blockState, BlockPos sourcePos,
+            double x, double y, double z, float intensity) {
+        if (!level.isClientSide() || blockState.isAir() || blockState.getRenderShape() == RenderShape.INVISIBLE) {
+            return;
+        }
+
+        BlockParticleOption dust = new BlockParticleOption(ParticleTypes.DUST_PILLAR, blockState);
+        int dustCount = 1 + Mth.floor(Mth.clamp(intensity, 0.0F, 1.0F) * 2.0F);
+        for (int i = 0; i < dustCount; i++) {
+            level.addParticle(dust,
+                    x + level.getRandom().nextGaussian() * 0.45D,
+                    y + 0.05D,
+                    z + level.getRandom().nextGaussian() * 0.45D,
+                    level.getRandom().nextGaussian() * 0.012D,
+                    0.01D + level.getRandom().nextDouble() * 0.025D,
+                    level.getRandom().nextGaussian() * 0.012D);
+        }
+
+        if (level.getRandom().nextFloat() < 0.3F + intensity * 0.35F) {
+            BlockParticleOption fragment = new BlockParticleOption(ParticleTypes.BLOCK, blockState);
+            Vec3 velocity = new Vec3(level.getRandom().nextGaussian() * 0.04D,
+                    0.08D + level.getRandom().nextDouble() * 0.12D,
+                    level.getRandom().nextGaussian() * 0.04D);
+            level.addParticle(fragment, x, y + 0.08D, z, velocity.x, velocity.y, velocity.z);
         }
     }
 }
