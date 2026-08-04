@@ -4,5 +4,12 @@
   "entity.wotn.fenrir": "Fenrir",
   "item.wotn.bilberry": "Bilberry",
   "item.wotn.fenrir_fur": "Fenrir Fur",
-  "item.wotn.golem_core": "Golem Core"
+  "item.wotn.golem_core": "Golem Core",
+  "item.wotn.leviathan_axe": "Leviathan Axe",
+  "entity.wotn.leviathan_axe_projectile": "Thrown Leviathan Axe",
+  "effect.wotn.frozen": "Frozen",
+  "entity.wotn.frozen_block": "Frozen Block",
+  "key.wotn.leviathan_axe_skill": "Throw Leviathan Axe",
+  "key.wotn.leviathan_imbue": "Imbue Leviathan Axe with Ice",
+  "key.category.wotn.skills": "Skills - Whispers of the North"
 }

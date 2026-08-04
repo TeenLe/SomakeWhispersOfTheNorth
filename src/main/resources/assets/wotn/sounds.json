@@ -11,5 +11,15 @@
         "stream": true
       }
     ]
+  },
+  "freeze": {
+    "sounds": [
+      "wotn:freeze"
+    ]
+  },
+  "unfreeze": {
+    "sounds": [
+      "wotn:unfreeze"
+    ]
   }
 }

@@ -4,5 +4,12 @@
   "entity.wotn.fenrir": "Fenrir",
   "item.wotn.bilberry": "Mirtilo",
   "item.wotn.fenrir_fur": "Pele de Fenrir",
-  "item.wotn.golem_core": "Nucleo de Golem"
+  "item.wotn.golem_core": "Nucleo de Golem",
+  "item.wotn.leviathan_axe": "Machado Leviata",
+  "entity.wotn.leviathan_axe_projectile": "Machado Leviata Arremessado",
+  "effect.wotn.frozen": "Congelado",
+  "entity.wotn.frozen_block": "Bloco Congelado",
+  "key.wotn.leviathan_axe_skill": "Arremessar Machado Leviata",
+  "key.wotn.leviathan_imbue": "Imbuir Machado Leviata em Gelo",
+  "key.category.wotn.skills": "Skills - Whispers of the North"
 }

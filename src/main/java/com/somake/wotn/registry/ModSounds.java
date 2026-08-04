@@ -22,6 +22,16 @@ public final class ModSounds {
             () -> SoundEvent.createVariableRangeEvent(
                     Identifier.fromNamespaceAndPath(WhispersOfTheNorth.MODID, "fenrir_underground_moving")));
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> FREEZE = SOUND_EVENTS.register(
+            "freeze",
+            () -> SoundEvent.createVariableRangeEvent(
+                    Identifier.fromNamespaceAndPath(WhispersOfTheNorth.MODID, "freeze")));
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> UNFREEZE = SOUND_EVENTS.register(
+            "unfreeze",
+            () -> SoundEvent.createVariableRangeEvent(
+                    Identifier.fromNamespaceAndPath(WhispersOfTheNorth.MODID, "unfreeze")));
+
     private ModSounds() {
     }
 }

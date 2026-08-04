@@ -2,9 +2,11 @@ package com.somake.wotn.registry;
 
 import com.somake.wotn.WhispersOfTheNorth;
 import com.somake.wotn.entity.FenrirEntity;
+import com.somake.wotn.entity.FrozenBlockEntity;
 import com.somake.wotn.entity.GolemEntity;
 import com.somake.wotn.entity.GroundWaveEntity;
 import com.somake.wotn.entity.StoneSlimeEntity;
+import com.somake.wotn.entity.LeviathanAxeEntity;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -40,6 +42,18 @@ public final class ModEntities {
                     .eyeHeight(1.85F)
                     .clientTrackingRange(16)
                     .updateInterval(2));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<LeviathanAxeEntity>> LEVIATHAN_AXE_PROJECTILE = ENTITY_TYPES.registerEntityType("leviathan_axe_projectile", LeviathanAxeEntity::new, MobCategory.MISC,
+            builder -> builder
+                    .sized(0.8F, 0.8F)
+                    .clientTrackingRange(12)
+                    .updateInterval(1));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<FrozenBlockEntity>> FROZEN_BLOCK = ENTITY_TYPES.registerEntityType("frozen_block", FrozenBlockEntity::new, MobCategory.MISC,
+            builder -> builder
+                    .sized(1.0F, 1.0F)
+                    .clientTrackingRange(10)
+                    .updateInterval(1));
 
     private ModEntities() {
     }
