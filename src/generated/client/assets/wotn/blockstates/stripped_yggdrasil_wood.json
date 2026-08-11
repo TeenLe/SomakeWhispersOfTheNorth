@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "wotn:block/stripped_yggdrasil_wood",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "wotn:block/stripped_yggdrasil_wood"
+    },
+    "axis=z": {
+      "model": "wotn:block/stripped_yggdrasil_wood",
+      "x": 90
+    }
+  }
+}

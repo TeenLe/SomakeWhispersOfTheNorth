@@ -2,6 +2,9 @@ package com.somake.wotn.skill;
 
 import com.somake.wotn.network.LeviathanImbueStatePayload;
 import com.somake.wotn.registry.ModDataComponents;
+import com.somake.wotn.skilltree.LeviathanSkillTree;
+import com.somake.wotn.skilltree.LeviathanMastery;
+import com.somake.wotn.skilltree.WeaponSkillData;
 import com.somake.wotn.registry.ModItems;
 import com.somake.wotn.registry.ModSounds;
 import com.somake.wotn.effect.FreezeManager;
@@ -9,6 +12,8 @@ import com.somake.wotn.effect.FreezeManager;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -26,10 +31,13 @@ public final class LeviathanImbueSkill {
     public static final int COOLDOWN_TICKS = 20 * 20;
     public static final float BONUS_DAMAGE = 6.0F;
     private static final Map<UUID, Long> READY_AT = new HashMap<>();
+    private static final Map<UUID, Set<UUID>> REWARDED_TARGETS = new HashMap<>();
 
     public static void activate(ServerPlayer player) {
         ItemStack axe = findAxe(player);
-        if (axe.isEmpty() || !player.isAlive() || player.isSpectator()) {
+        if (axe.isEmpty() || !isEquipped(axe, 1)
+                || !WeaponSkillData.progress(axe).isUnlocked(LeviathanSkillTree.IMBUE)
+                || !player.isAlive() || player.isSpectator()) {
             return;
         }
 
@@ -44,6 +52,7 @@ public final class LeviathanImbueSkill {
         long activeUntil = now + DURATION_TICKS;
         axe.set(ModDataComponents.ICE_IMBUED_UNTIL.get(), activeUntil);
         READY_AT.put(player.getUUID(), now + COOLDOWN_TICKS);
+        REWARDED_TARGETS.put(player.getUUID(), new HashSet<>());
         level.sendParticles(ParticleTypes.SNOWFLAKE, player.getX(), player.getEyeY() - 0.45D, player.getZ(),
                 28, 0.5D, 0.55D, 0.5D, 0.11D);
         level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.AMETHYST_BLOCK_CHIME,
@@ -55,13 +64,19 @@ public final class LeviathanImbueSkill {
         sync(player, DURATION_TICKS, COOLDOWN_TICKS, false);
     }
 
+    private static boolean isEquipped(ItemStack axe, int skillId) {
+        return axe.getOrDefault(ModDataComponents.LEVIATHAN_PRIMARY_SKILL.get(), 3) == skillId
+                || axe.getOrDefault(ModDataComponents.LEVIATHAN_SECONDARY_SKILL.get(), 0) == skillId;
+    }
+
     public static void onIncomingDamage(LivingIncomingDamageEvent event) {
         var source = event.getSource();
         if (!(source.getEntity() instanceof ServerPlayer player) || source.getDirectEntity() != player) {
             return;
         }
         ItemStack weapon = source.getWeaponItem();
-        if (weapon != null && weapon.is(ModItems.LEVIATHAN_AXE.get()) && isActive(weapon, player.level())) {
+        if (weapon != null && weapon.is(ModItems.LEVIATHAN_AXE.get()) && isEquipped(weapon, 1)
+                && isActive(weapon, player.level())) {
             event.setAmount(event.getAmount() + BONUS_DAMAGE);
         }
     }
@@ -75,9 +90,14 @@ public final class LeviathanImbueSkill {
             return;
         }
         ItemStack weapon = source.getWeaponItem();
-        if (weapon != null && weapon.is(ModItems.LEVIATHAN_AXE.get()) && isActive(weapon, player.level())
+        if (weapon != null && weapon.is(ModItems.LEVIATHAN_AXE.get()) && isEquipped(weapon, 1)
+                && isActive(weapon, player.level())
                 && player.level() instanceof ServerLevel serverLevel) {
             LeviathanAxeEffects.spawnImbuedHit(serverLevel, event.getEntity(), player.getLookAngle(), false);
+            Set<UUID> rewarded = REWARDED_TARGETS.computeIfAbsent(player.getUUID(), ignored -> new HashSet<>());
+            if (rewarded.size() < 6 && rewarded.add(event.getEntity().getUUID())) {
+                LeviathanMastery.awardForHostileHit(player, weapon, event.getEntity(), 1);
+            }
         }
     }
 

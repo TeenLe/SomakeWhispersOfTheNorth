@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_shelf_center",
+  "textures": {
+    "all": "wotn:block/yggdrasil_shelf",
+    "particle": "wotn:block/stripped_yggdrasil_log"
+  }
+}

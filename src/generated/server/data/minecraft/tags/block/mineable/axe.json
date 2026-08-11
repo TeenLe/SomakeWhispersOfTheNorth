@@ -1,0 +1,17 @@
+{
+  "values": [
+    "wotn:yggdrasil_log",
+    "wotn:yggdrasil_wood",
+    "wotn:stripped_yggdrasil_log",
+    "wotn:stripped_yggdrasil_wood",
+    "wotn:yggdrasil_planks",
+    "wotn:yggdrasil_stairs",
+    "wotn:yggdrasil_slab",
+    "wotn:yggdrasil_fence",
+    "wotn:yggdrasil_fence_gate",
+    "wotn:yggdrasil_door",
+    "wotn:yggdrasil_trapdoor",
+    "wotn:yggdrasil_pressure_plate",
+    "wotn:yggdrasil_button"
+  ]
+}

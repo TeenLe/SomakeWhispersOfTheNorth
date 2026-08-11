@@ -39,3 +39,4 @@ run/
 repo/
 !**/src/**/repo/
 src/main/resources/assets/wotn/textures/particle/
+src/main/resources/assets/wotn/

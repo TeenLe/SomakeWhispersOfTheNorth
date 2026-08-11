@@ -18,10 +18,6 @@ public final class ParticleHelper {
     private ParticleHelper() {
     }
 
-    public static RingParams ring(float red, float green, float blue, float scale, float radius) {
-        return RingParams.of(red, green, blue, scale, radius);
-    }
-
     public static void spawnImpactRing(Level level, double x, double y, double z,
             float red, float green, float blue,
             float scale, float radius, int duration) {

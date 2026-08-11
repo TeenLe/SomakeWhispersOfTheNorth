@@ -7,6 +7,7 @@ import com.somake.wotn.entity.GolemEntity;
 import com.somake.wotn.entity.GroundWaveEntity;
 import com.somake.wotn.entity.StoneSlimeEntity;
 import com.somake.wotn.entity.LeviathanAxeEntity;
+import com.somake.wotn.entity.IceSpikeEntity;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -54,6 +55,12 @@ public final class ModEntities {
                     .sized(1.0F, 1.0F)
                     .clientTrackingRange(10)
                     .updateInterval(1));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<IceSpikeEntity>> ICE_SPIKE = ENTITY_TYPES.registerEntityType("ice_spike", IceSpikeEntity::new, MobCategory.MISC,
+            builder -> builder
+                    .sized(0.8F, 2.6F)
+                    .clientTrackingRange(10)
+                    .updateInterval(2));
 
     private ModEntities() {
     }

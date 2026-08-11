@@ -4,6 +4,7 @@ import com.somake.wotn.entity.LeviathanAxeEntity;
 import com.somake.wotn.effect.LeviathanAxeEffects;
 import com.somake.wotn.network.LeviathanAxeCooldownPayload;
 import com.somake.wotn.registry.ModItems;
+import com.somake.wotn.registry.ModDataComponents;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,6 +39,7 @@ public final class LeviathanAxeSkill {
         }
 
         ItemStack stack = player.getItemInHand(hand);
+        if (!isEquipped(stack, 3)) return;
         level.playSound(null, player.getX(), player.getEyeY(), player.getZ(),
                 SoundEvents.TRIDENT_THROW, SoundSource.PLAYERS, 0.9F,
                 0.75F + player.getRandom().nextFloat() * 0.15F);
@@ -51,6 +53,11 @@ public final class LeviathanAxeSkill {
 
         READY_AT.put(player.getUUID(), now + COOLDOWN_TICKS);
         sync(player, COOLDOWN_TICKS);
+    }
+
+    private static boolean isEquipped(ItemStack axe, int skillId) {
+        return axe.getOrDefault(ModDataComponents.LEVIATHAN_PRIMARY_SKILL.get(), 3) == skillId
+                || axe.getOrDefault(ModDataComponents.LEVIATHAN_SECONDARY_SKILL.get(), 0) == skillId;
     }
 
     private static InteractionHand findAxeHand(ServerPlayer player) {

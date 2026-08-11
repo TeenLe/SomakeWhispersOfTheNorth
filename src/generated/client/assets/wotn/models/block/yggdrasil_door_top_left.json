@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/door_top_left",
+  "textures": {
+    "bottom": "wotn:block/yggdrasil_door_bottom",
+    "top": "wotn:block/yggdrasil_door_top"
+  }
+}

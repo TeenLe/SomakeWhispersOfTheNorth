@@ -1,0 +1,62 @@
+{
+  "speaker": "dialogue.wotn.blacksmith.name",
+  "role": "dialogue.wotn.blacksmith.role",
+  "start": "greeting",
+  "nodes": {
+    "greeting": {
+      "text": "dialogue.wotn.blacksmith.greeting",
+      "responses": [
+        {
+          "id": "open_forge",
+          "text": "dialogue.wotn.blacksmith.open_forge",
+          "action": "open_weapon_mastery"
+        },
+        {
+          "id": "about",
+          "text": "dialogue.wotn.blacksmith.who_are_you",
+          "next": "about"
+        },
+        {
+          "id": "runes",
+          "text": "dialogue.wotn.blacksmith.ask_runes",
+          "next": "runes"
+        },
+        {
+          "id": "goodbye",
+          "text": "dialogue.wotn.common.goodbye",
+          "action": "close"
+        }
+      ]
+    },
+    "about": {
+      "text": "dialogue.wotn.blacksmith.about",
+      "responses": [
+        {
+          "id": "back",
+          "text": "dialogue.wotn.common.back",
+          "next": "greeting"
+        },
+        {
+          "id": "goodbye",
+          "text": "dialogue.wotn.common.goodbye",
+          "action": "close"
+        }
+      ]
+    },
+    "runes": {
+      "text": "dialogue.wotn.blacksmith.runes",
+      "responses": [
+        {
+          "id": "open_forge",
+          "text": "dialogue.wotn.blacksmith.open_forge",
+          "action": "open_weapon_mastery"
+        },
+        {
+          "id": "back",
+          "text": "dialogue.wotn.common.back",
+          "next": "greeting"
+        }
+      ]
+    }
+  }
+}

@@ -1,12 +1,9 @@
 package com.somake.wotn.client;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import com.somake.wotn.WhispersOfTheNorth;
-import com.somake.wotn.network.ActivateLeviathanImbuePayload;
 import com.somake.wotn.network.LeviathanImbueStatePayload;
 import com.somake.wotn.registry.ModItems;
 
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -20,17 +17,12 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
-import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
-import net.neoforged.neoforge.client.network.ClientPacketDistributor;
-import org.lwjgl.glfw.GLFW;
 
 public final class LeviathanImbueClient {
     private static final int ACTIVATION_ANIMATION_TICKS = 28;
     private static final Identifier HUD_LAYER = Identifier.fromNamespaceAndPath(WhispersOfTheNorth.MODID, "leviathan_imbue_hud");
     private static final Identifier ICON = Identifier.fromNamespaceAndPath(WhispersOfTheNorth.MODID, "textures/gui/ice_skill.png");
-    private static final KeyMapping.Category CATEGORY = new KeyMapping.Category(Identifier.fromNamespaceAndPath(WhispersOfTheNorth.MODID, "skills"));
-    private static final KeyMapping ACTIVATE = new KeyMapping("key.wotn.leviathan_imbue", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, CATEGORY);
     private static int activeTicks;
     private static int cooldownTicks;
     private static int deniedPulseTicks;
@@ -39,10 +31,6 @@ public final class LeviathanImbueClient {
     private static int activationAnimationTicks;
     private static int endingAnimationTicks;
     private static boolean wasActive;
-
-    public static void registerKeys(RegisterKeyMappingsEvent event) {
-        event.register(ACTIVATE);
-    }
 
     public static void registerHud(RegisterGuiLayersEvent event) {
         event.registerAbove(VanillaGuiLayers.HOTBAR, HUD_LAYER, LeviathanImbueClient::renderHud);
@@ -56,12 +44,6 @@ public final class LeviathanImbueClient {
             wasCoolingDown = false;
             wasActive = false;
             return;
-        }
-        while (ACTIVATE.consumeClick()) {
-            if (minecraft.player != null && isHoldingAxe()) {
-                if (cooldownTicks > 0) deniedPulseTicks = 14;
-                ClientPacketDistributor.sendToServer(ActivateLeviathanImbuePayload.INSTANCE);
-            }
         }
         if (!minecraft.isPaused()) {
             if (activeTicks > 0) activeTicks--;
@@ -186,9 +168,12 @@ public final class LeviathanImbueClient {
 
     private static void renderHud(GuiGraphicsExtractor graphics, net.minecraft.client.DeltaTracker deltaTracker) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.options.hideGui || (!isHoldingAxe() && activeTicks <= 0 && cooldownTicks <= 0)) return;
+        boolean equipped = LeviathanSkillSelection.isEquipped(LeviathanSkillSelection.IMBUE);
+        if (minecraft.options.hideGui || (!equipped && activeTicks <= 0 && cooldownTicks <= 0)
+                || (!isHoldingAxe() && activeTicks <= 0 && cooldownTicks <= 0)) return;
         int size = 20;
-        int x = graphics.guiWidth() / 2 + 130;
+        int slot = LeviathanSkillSelection.slotForSkill(LeviathanSkillSelection.IMBUE);
+        int x = graphics.guiWidth() / 2 + (slot == LeviathanSkillSelection.SLOT_ONE ? 102 : 130);
         int y = graphics.guiHeight() - 24;
         float denied = deniedPulseTicks > 0 ? 0.5F + 0.5F * Mth.sin((14 - deniedPulseTicks) * 0.58F) : 0;
         float ready = readyPulseTicks > 0 ? 0.5F + 0.5F * Mth.sin((14 - readyPulseTicks) * 0.45F) : 0;
@@ -207,7 +192,7 @@ public final class LeviathanImbueClient {
             Component seconds = Component.literal(Integer.toString(Mth.ceil(timer / 20.0F)));
             graphics.text(minecraft.font, seconds, x + size / 2 - minecraft.font.width(seconds) / 2, y + size / 2 - 4, 0xFFFFFFFF, true);
         }
-        Component key = ACTIVATE.getTranslatedKeyMessage();
+        Component key = LeviathanSkillSelection.keyMessageForSkill(LeviathanSkillSelection.IMBUE);
         graphics.text(minecraft.font, key, x + size - minecraft.font.width(key), y - 10, 0xFFBFEFFF, true);
     }
 

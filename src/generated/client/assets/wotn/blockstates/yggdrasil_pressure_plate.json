@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "powered=false": {
+      "model": "wotn:block/yggdrasil_pressure_plate"
+    },
+    "powered=true": {
+      "model": "wotn:block/yggdrasil_pressure_plate_down"
+    }
+  }
+}

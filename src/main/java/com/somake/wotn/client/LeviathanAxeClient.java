@@ -1,12 +1,9 @@
 package com.somake.wotn.client;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import com.somake.wotn.WhispersOfTheNorth;
-import com.somake.wotn.network.ActivateLeviathanAxePayload;
 import com.somake.wotn.network.LeviathanAxeCooldownPayload;
 import com.somake.wotn.registry.ModItems;
 
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -15,29 +12,17 @@ import net.minecraft.util.Mth;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
-import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
-import net.neoforged.neoforge.client.network.ClientPacketDistributor;
-import org.lwjgl.glfw.GLFW;
 
 public final class LeviathanAxeClient {
     private static final Identifier HUD_LAYER = Identifier.fromNamespaceAndPath(WhispersOfTheNorth.MODID, "leviathan_axe_hud");
     private static final Identifier ICON = Identifier.fromNamespaceAndPath(WhispersOfTheNorth.MODID, "textures/gui/ice_skill.png");
-    private static final KeyMapping.Category CATEGORY = new KeyMapping.Category(
-            Identifier.fromNamespaceAndPath(WhispersOfTheNorth.MODID, "skills"));
-    private static final KeyMapping ACTIVATE = new KeyMapping("key.wotn.leviathan_axe_skill", InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_R, CATEGORY);
     private static int remainingTicks;
     private static int totalTicks = 1;
     private static int readyPulseTicks;
     private static int deniedPulseTicks;
     private static boolean wasCoolingDown;
     private static boolean hadLevel;
-
-    public static void registerKeys(RegisterKeyMappingsEvent event) {
-        event.registerCategory(CATEGORY);
-        event.register(ACTIVATE);
-    }
 
     public static void registerHud(RegisterGuiLayersEvent event) {
         event.registerAbove(VanillaGuiLayers.HOTBAR, HUD_LAYER, LeviathanAxeClient::renderHud);
@@ -57,14 +42,6 @@ public final class LeviathanAxeClient {
             return;
         }
         hadLevel = true;
-        while (ACTIVATE.consumeClick()) {
-            if (minecraft.player != null && minecraft.getConnection() != null && isHoldingAxe()) {
-                if (remainingTicks > 0) {
-                    deniedPulseTicks = 14;
-                }
-                ClientPacketDistributor.sendToServer(ActivateLeviathanAxePayload.INSTANCE);
-            }
-        }
         if (remainingTicks > 0 && !minecraft.isPaused()) {
             remainingTicks--;
         }
@@ -98,12 +75,14 @@ public final class LeviathanAxeClient {
 
     private static void renderHud(GuiGraphicsExtractor graphics, net.minecraft.client.DeltaTracker deltaTracker) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.options.hideGui || (!isHoldingAxe() && remainingTicks <= 0)) {
+        if (minecraft.options.hideGui || (!LeviathanSkillSelection.isEquipped(LeviathanSkillSelection.THROW)
+                && remainingTicks <= 0) || (!isHoldingAxe() && remainingTicks <= 0)) {
             return;
         }
 
         int size = 20;
-        int x = graphics.guiWidth() / 2 + 102;
+        int slot = LeviathanSkillSelection.slotForSkill(LeviathanSkillSelection.THROW);
+        int x = graphics.guiWidth() / 2 + (slot == LeviathanSkillSelection.SLOT_ONE ? 102 : 130);
         int y = graphics.guiHeight() - 24;
         float pulse = readyPulseTicks > 0 ? Mth.sin((14 - readyPulseTicks) * 0.45F) * 0.5F + 0.5F : 0.0F;
         float deniedPulse = deniedPulseTicks > 0
@@ -135,7 +114,7 @@ public final class LeviathanAxeClient {
             int textY = y + size / 2 - 4;
             graphics.text(minecraft.font, text, textX, textY, 0xFFFFFFFF, true);
         }
-        Component key = Component.literal(ACTIVATE.getTranslatedKeyMessage().getString());
+        Component key = LeviathanSkillSelection.keyMessageForSkill(LeviathanSkillSelection.THROW);
         graphics.text(minecraft.font, key, x + size - minecraft.font.width(key), y - 10, 0xFFBFEFFF, true);
     }
 

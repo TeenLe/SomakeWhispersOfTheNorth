@@ -41,6 +41,10 @@ public final class ModItems {
         if (event.getTabKey() == CreativeModeTabs.COMBAT || event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
             event.accept(LEVIATHAN_AXE);
         }
+
+        if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
+            event.accept(ModBlocks.YGGDRASIL_SHELF_ITEM);
+        }
     }
 
     private ModItems() {

@@ -3,6 +3,7 @@ package com.somake.wotn.entity;
 import com.somake.wotn.effect.FreezeManager;
 import com.somake.wotn.effect.LeviathanAxeEffects;
 import com.somake.wotn.skill.LeviathanImbueSkill;
+import com.somake.wotn.skilltree.LeviathanMastery;
 import com.somake.wotn.registry.ModEntities;
 import com.somake.wotn.registry.ModItems;
 
@@ -134,7 +135,16 @@ public class LeviathanAxeEntity extends ThrowableItemProjectile {
 
         boolean imbued = LeviathanImbueSkill.isActive(this.getItem(), this.level());
         float damage = DAMAGE + (imbued ? LeviathanImbueSkill.BONUS_DAMAGE : 0.0F);
+        float healthBefore = target instanceof LivingEntity livingTarget ? livingTarget.getHealth() : 0.0F;
         target.hurt(this.damageSources().thrown(this, owner), damage);
+        if (owner instanceof net.minecraft.server.level.ServerPlayer player
+                && target instanceof LivingEntity living) {
+            if (living.getHealth() < healthBefore) {
+                ItemStack carried = this.getItem().copy();
+                LeviathanMastery.awardForHostileHit(player, carried, living, 2);
+                this.setItem(carried);
+            }
+        }
         if (this.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
             LeviathanAxeEffects.spawnImpact(serverLevel, result.getLocation(), this.getDeltaMovement(), false);
             if (imbued) {

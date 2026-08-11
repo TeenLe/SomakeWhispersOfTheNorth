@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "wotn:block/yggdrasil_slab"
+    },
+    "type=double": {
+      "model": "wotn:block/yggdrasil_planks"
+    },
+    "type=top": {
+      "model": "wotn:block/yggdrasil_slab_top"
+    }
+  }
+}

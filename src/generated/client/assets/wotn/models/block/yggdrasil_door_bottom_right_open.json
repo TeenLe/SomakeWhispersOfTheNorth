@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/door_bottom_right_open",
+  "textures": {
+    "bottom": "wotn:block/yggdrasil_door_bottom",
+    "top": "wotn:block/yggdrasil_door_top"
+  }
+}

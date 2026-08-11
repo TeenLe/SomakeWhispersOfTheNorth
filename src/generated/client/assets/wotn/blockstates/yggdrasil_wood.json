@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "wotn:block/yggdrasil_wood",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "wotn:block/yggdrasil_wood"
+    },
+    "axis=z": {
+      "model": "wotn:block/yggdrasil_wood",
+      "x": 90
+    }
+  }
+}
