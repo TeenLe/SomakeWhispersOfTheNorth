@@ -1,0 +1,27 @@
+{
+  "values": {
+    "wotn:yggdrasil_leaves": {
+      "chance": 0.3
+    },
+    "wotn:yggdrasil_sapling": {
+      "chance": 0.3,
+      "can_villager_compost": true
+    },
+    "wotn:yggdrasil_leaf_litter": {
+      "chance": 0.3
+    },
+    "wotn:idunn_leaves": {
+      "chance": 0.3
+    },
+    "wotn:idunn_sapling": {
+      "chance": 0.3,
+      "can_villager_compost": true
+    },
+    "wotn:idunn_leaf_litter": {
+      "chance": 0.3
+    },
+    "wotn:bilberry": {
+      "chance": 0.3
+    }
+  }
+}

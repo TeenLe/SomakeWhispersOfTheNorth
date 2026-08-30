@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "wotn:item/potions/niflheim_essence_tier_3"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.draugr.idle": {
+      "loop": true,
+      "animation_length": 2.0,
+      "bones": {
+        "Body": {
+          "rotation": {
+            "0.0": { "vector": [0, 0, 0] },
+            "1.0": { "vector": [1.5, 0, 0] },
+            "2.0": { "vector": [0, 0, 0] }
+          }
+        }
+      }
+    },
+    "animation.draugr.walk": {
+      "loop": true,
+      "animation_length": 1.0,
+      "bones": {
+        "RightLeg": {
+          "rotation": {
+            "0.0": { "vector": [32, 0, 0] },
+            "0.5": { "vector": [-32, 0, 0] },
+            "1.0": { "vector": [32, 0, 0] }
+          }
+        },
+        "LeftLeg": {
+          "rotation": {
+            "0.0": { "vector": [-32, 0, 0] },
+            "0.5": { "vector": [32, 0, 0] },
+            "1.0": { "vector": [-32, 0, 0] }
+          }
+        },
+        "RightArm": {
+          "rotation": {
+            "0.0": { "vector": [-24, 0, 0] },
+            "0.5": { "vector": [24, 0, 0] },
+            "1.0": { "vector": [-24, 0, 0] }
+          }
+        },
+        "LeftArm": {
+          "rotation": {
+            "0.0": { "vector": [24, 0, 0] },
+            "0.5": { "vector": [-24, 0, 0] },
+            "1.0": { "vector": [24, 0, 0] }
+          }
+        }
+      }
+    },
+    "animation.draugr.attack": {
+      "animation_length": 0.5,
+      "bones": {
+        "Body": {
+          "rotation": {
+            "0.0": { "vector": [0, 0, 0] },
+            "0.15": { "vector": [0, 18, 0] },
+            "0.3": { "vector": [0, -10, 0] },
+            "0.5": { "vector": [0, 0, 0] }
+          }
+        },
+        "LeftArm": {
+          "rotation": {
+            "0.0": { "vector": [0, 0, 0] },
+            "0.15": { "vector": [-105, 0, -15] },
+            "0.3": { "vector": [35, 0, 12] },
+            "0.5": { "vector": [0, 0, 0] }
+          }
+        }
+      }
+    }
+  }
+}

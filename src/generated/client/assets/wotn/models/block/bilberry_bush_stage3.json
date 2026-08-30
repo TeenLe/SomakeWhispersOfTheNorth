@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "wotn:block/bilberry_bush_stage3"
+  }
+}

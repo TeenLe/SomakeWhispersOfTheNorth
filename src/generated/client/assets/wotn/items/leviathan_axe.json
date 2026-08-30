@@ -1,6 +1,14 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "wotn:item/leviathan_axe"
+    "type": "minecraft:condition",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "wotn:item/leviathan_axe"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "wotn:item/leviathan_axe_imbued"
+    },
+    "property": "wotn:leviathan_imbued"
   }
 }

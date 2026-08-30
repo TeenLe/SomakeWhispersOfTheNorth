@@ -13,6 +13,7 @@ import java.util.UUID;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -20,6 +21,8 @@ import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import com.somake.wotn.skilltree.ForgeSessionManager;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import com.somake.wotn.alchemy.AlchemyManager;
+import org.jspecify.annotations.Nullable;
 
 public final class DialogueManager extends SimpleJsonResourceReloadListener<DialogueDefinition> {
     public static final DialogueManager INSTANCE = new DialogueManager();
@@ -54,9 +57,14 @@ public final class DialogueManager extends SimpleJsonResourceReloadListener<Dial
     }
 
     public boolean start(ServerPlayer player, Identifier dialogueId) {
+        return start(player, dialogueId, null);
+    }
+
+    public boolean start(ServerPlayer player, Identifier dialogueId, @Nullable Entity source) {
         DialogueDefinition definition = this.definitions.get(dialogueId);
         if (definition == null || !definition.nodes().containsKey(definition.start())) return false;
-        Session session = new Session(UUID.randomUUID(), dialogueId, definition.start());
+        Session session = new Session(UUID.randomUUID(), dialogueId, definition.start(),
+                source == null ? null : source.getUUID());
         this.sessions.put(player.getUUID(), session);
         sendNode(player, session, definition);
         return true;
@@ -65,6 +73,10 @@ public final class DialogueManager extends SimpleJsonResourceReloadListener<Dial
     public void select(ServerPlayer player, UUID sessionId, String responseId) {
         Session session = this.sessions.get(player.getUUID());
         if (session == null || !session.id().equals(sessionId)) return;
+        if (!isSourceValid(player, session)) {
+            close(player, sessionId);
+            return;
+        }
         DialogueDefinition definition = this.definitions.get(session.dialogueId());
         if (definition == null) {
             close(player, sessionId);
@@ -85,6 +97,12 @@ public final class DialogueManager extends SimpleJsonResourceReloadListener<Dial
                     ForgeSessionManager.INSTANCE.open(player);
                     return;
                 }
+                case "open_alchemy" -> {
+                    this.sessions.remove(player.getUUID());
+                    PacketDistributor.sendToPlayer(player, new CloseDialoguePayload(sessionId));
+                    AlchemyManager.INSTANCE.open(player);
+                    return;
+                }
                 case "close" -> {
                     close(player, sessionId);
                     return;
@@ -93,7 +111,8 @@ public final class DialogueManager extends SimpleJsonResourceReloadListener<Dial
             }
         }
         if (response.next().isPresent() && definition.nodes().containsKey(response.next().get())) {
-            Session next = new Session(session.id(), session.dialogueId(), response.next().get());
+            Session next = new Session(session.id(), session.dialogueId(), response.next().get(),
+                    session.sourceEntityId());
             this.sessions.put(player.getUUID(), next);
             sendNode(player, next, definition);
         }
@@ -127,6 +146,15 @@ public final class DialogueManager extends SimpleJsonResourceReloadListener<Dial
         return "";
     }
 
-    private record Session(UUID id, Identifier dialogueId, String nodeId) {
+    private boolean isSourceValid(ServerPlayer player, Session session) {
+        if (session.sourceEntityId() == null) return true;
+        Entity source = player.level().getEntityInAnyDimension(session.sourceEntityId());
+        return source != null
+                && source.isAlive()
+                && source.level() == player.level()
+                && player.distanceToSqr(source) <= 36.0D;
+    }
+
+    private record Session(UUID id, Identifier dialogueId, String nodeId, @Nullable UUID sourceEntityId) {
     }
 }

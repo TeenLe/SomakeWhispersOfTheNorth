@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/door_bottom_left",
+  "textures": {
+    "bottom": "wotn:block/idunn_door_bottom",
+    "top": "wotn:block/idunn_door_top"
+  }
+}

@@ -60,6 +60,14 @@ public record WeaponSkillProgress(int points, int unlockedMask, int masteryLevel
                 gainedLevels, gainedPoints);
     }
 
+    public static WeaponSkillProgress maximized() {
+        int unlocked = DEFAULT_UNLOCKED;
+        for (LeviathanSkillTree.Node node : LeviathanSkillTree.NODES) {
+            if (node.implemented()) unlocked |= bit(node.id());
+        }
+        return new WeaponSkillProgress(0, unlocked, MAX_MASTERY_LEVEL, 0);
+    }
+
     public static int xpRequired(int level) {
         return 100 + (Math.max(1, level) - 1) * 75;
     }

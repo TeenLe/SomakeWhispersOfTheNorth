@@ -8,6 +8,7 @@ import com.somake.wotn.skilltree.WeaponSkillData;
 import com.somake.wotn.registry.ModItems;
 import com.somake.wotn.registry.ModSounds;
 import com.somake.wotn.effect.FreezeManager;
+import com.somake.wotn.particle.ParticleHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +16,6 @@ import java.util.UUID;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -53,7 +53,8 @@ public final class LeviathanImbueSkill {
         axe.set(ModDataComponents.ICE_IMBUED_UNTIL.get(), activeUntil);
         READY_AT.put(player.getUUID(), now + COOLDOWN_TICKS);
         REWARDED_TARGETS.put(player.getUUID(), new HashSet<>());
-        level.sendParticles(ParticleTypes.SNOWFLAKE, player.getX(), player.getEyeY() - 0.45D, player.getZ(),
+        ParticleHelper.spawnLayeredSnowflakes(level, ParticleHelper.SNOWFLAKE_BURST, 0.36F,
+                player.getX(), player.getEyeY() - 0.45D, player.getZ(),
                 28, 0.5D, 0.55D, 0.5D, 0.11D);
         level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.AMETHYST_BLOCK_CHIME,
                 SoundSource.PLAYERS, 0.6F, 1.25F);

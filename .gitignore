@@ -38,5 +38,4 @@ run/
 **/src/generated/**/.cache/
 repo/
 !**/src/**/repo/
-src/main/resources/assets/wotn/textures/particle/
-src/main/resources/assets/wotn/
+# src/main/resources/assets/wotn/

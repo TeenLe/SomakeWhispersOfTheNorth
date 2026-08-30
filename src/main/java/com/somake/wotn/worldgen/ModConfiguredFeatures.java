@@ -20,9 +20,15 @@ public final class ModConfiguredFeatures {
     public static final ResourceKey<ConfiguredFeature<?, ?>> YGGDRASIL_TREE = ResourceKey.create(
             Registries.CONFIGURED_FEATURE,
             Identifier.fromNamespaceAndPath(WhispersOfTheNorth.MODID, "yggdrasil_tree"));
+    public static final ResourceKey<ConfiguredFeature<?, ?>> IDUNN_TREE = ResourceKey.create(
+            Registries.CONFIGURED_FEATURE,
+            Identifier.fromNamespaceAndPath(WhispersOfTheNorth.MODID, "idunn_tree"));
+    public static final ResourceKey<ConfiguredFeature<?, ?>> IDUNN_MEGA_TREE = ResourceKey.create(
+            Registries.CONFIGURED_FEATURE,
+            Identifier.fromNamespaceAndPath(WhispersOfTheNorth.MODID, "idunn_mega_tree"));
 
     public static void bootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
-        TreeConfiguration configuration = new TreeConfiguration.TreeConfigurationBuilder(
+        TreeConfiguration yggdrasilConfiguration = new TreeConfiguration.TreeConfigurationBuilder(
                 BlockStateProvider.simple(ModBlocks.YGGDRASIL_LOG.get()),
                 new StraightTrunkPlacer(4, 2, 0),
                 BlockStateProvider.simple(ModBlocks.YGGDRASIL_LEAVES.get()),
@@ -30,8 +36,13 @@ public final class ModConfiguredFeatures {
                 new TwoLayersFeatureSize(1, 0, 1))
                 .ignoreVines()
                 .build();
-
-        context.register(YGGDRASIL_TREE, new ConfiguredFeature<>(Feature.TREE, configuration));
+        context.register(YGGDRASIL_TREE, new ConfiguredFeature<>(Feature.TREE, yggdrasilConfiguration));
+        context.register(IDUNN_TREE, new ConfiguredFeature<>(
+                com.somake.wotn.registry.ModFeatures.IDUNN_TREE_1.get(),
+                net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration.INSTANCE));
+        context.register(IDUNN_MEGA_TREE, new ConfiguredFeature<>(
+                com.somake.wotn.registry.ModFeatures.IDUNN_TREE_2.get(),
+                net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration.INSTANCE));
     }
 
     private ModConfiguredFeatures() {

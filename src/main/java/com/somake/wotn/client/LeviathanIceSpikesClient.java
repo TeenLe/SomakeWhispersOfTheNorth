@@ -16,7 +16,7 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
 public final class LeviathanIceSpikesClient {
     private static final Identifier HUD_LAYER = Identifier.fromNamespaceAndPath(WhispersOfTheNorth.MODID, "ice_spikes_hud");
-    private static final Identifier ICON = Identifier.fromNamespaceAndPath(WhispersOfTheNorth.MODID, "textures/gui/ice_skill.png");
+    private static final Identifier ICON = Identifier.fromNamespaceAndPath(WhispersOfTheNorth.MODID, "textures/gui/ice_spikes.png");
     private static int remainingTicks;
     private static int totalTicks = 1;
     private static int deniedPulseTicks;

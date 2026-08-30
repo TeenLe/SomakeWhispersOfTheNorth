@@ -1,0 +1,54 @@
+{
+  "family": "fenrir",
+  "tier": 3,
+  "result": "wotn:fenrir_blood_tier_3",
+  "analysis_ticks": 6000,
+  "study_ingredients": [
+    {
+      "item": "wotn:fenrir_blood_tier_2",
+      "count": 1
+    },
+    {
+      "item": "wotn:fenrir_fur",
+      "count": 4
+    },
+    {
+      "item": "wotn:fenrir_blood",
+      "count": 6
+    },
+    {
+      "item": "minecraft:blaze_powder",
+      "count": 9
+    },
+    {
+      "item": "minecraft:glowstone_dust",
+      "count": 15
+    }
+  ],
+  "brewing_ingredients": [
+    {
+      "item": "minecraft:potion",
+      "components": {
+        "minecraft:potion_contents": "minecraft:strong_strength"
+      },
+      "count": 1
+    },
+    {
+      "item": "wotn:fenrir_blood",
+      "count": 1
+    },
+    {
+      "item": "minecraft:glowstone_dust",
+      "count": 1
+    },
+    {
+      "item": "wotn:wolf_tooth",
+      "count": 2
+    }
+  ],
+  "prerequisite": "wotn:fenrir_blood_tier_2",
+  "hidden_title": "screen.wotn.alchemy.hidden.fenrir.3",
+  "hint": "screen.wotn.alchemy.hint.fenrir.3",
+  "description": "screen.wotn.alchemy.description.fenrir",
+  "role": "screen.wotn.alchemy.role.power"
+}

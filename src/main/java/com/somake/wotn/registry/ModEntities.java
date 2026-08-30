@@ -8,6 +8,11 @@ import com.somake.wotn.entity.GroundWaveEntity;
 import com.somake.wotn.entity.StoneSlimeEntity;
 import com.somake.wotn.entity.LeviathanAxeEntity;
 import com.somake.wotn.entity.IceSpikeEntity;
+import com.somake.wotn.entity.FenrirIceOrbEntity;
+import com.somake.wotn.entity.FireDraugrEntity;
+import com.somake.wotn.entity.IceDraugrEntity;
+import com.somake.wotn.entity.npc.AlfriggEntity;
+import com.somake.wotn.entity.npc.KvasirEntity;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -31,6 +36,39 @@ public final class ModEntities {
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<IceDraugrEntity>> ICE_DRAUGR = ENTITY_TYPES.registerEntityType(
+            "ice_draugr", IceDraugrEntity::new, MobCategory.MONSTER,
+            builder -> builder
+                    .sized(0.65F, 2.0F)
+                    .eyeHeight(1.74F)
+                    .clientTrackingRange(8)
+                    .updateInterval(3));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<FireDraugrEntity>> FIRE_DRAUGR = ENTITY_TYPES.registerEntityType(
+            "fire_draugr", FireDraugrEntity::new, MobCategory.MONSTER,
+            builder -> builder
+                    .sized(0.65F, 2.0F)
+                    .eyeHeight(1.74F)
+                    .fireImmune()
+                    .clientTrackingRange(8)
+                    .updateInterval(3));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<AlfriggEntity>> ALFRIGG = ENTITY_TYPES.registerEntityType(
+            "alfrigg", AlfriggEntity::new, MobCategory.CREATURE,
+            builder -> builder
+                    .sized(0.6F, 1.8F)
+                    .eyeHeight(1.62F)
+                    .clientTrackingRange(8)
+                    .updateInterval(3));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<KvasirEntity>> KVASIR = ENTITY_TYPES.registerEntityType(
+            "kvasir", KvasirEntity::new, MobCategory.CREATURE,
+            builder -> builder
+                    .sized(0.6F, 1.8F)
+                    .eyeHeight(1.62F)
+                    .clientTrackingRange(8)
+                    .updateInterval(3));
+
     public static final DeferredHolder<EntityType<?>, EntityType<GroundWaveEntity>> GROUND_WAVE = ENTITY_TYPES.registerEntityType("ground_wave", GroundWaveEntity::new, MobCategory.MISC,
             builder -> builder
                     .sized(7.0F, 1.0F)
@@ -40,9 +78,9 @@ public final class ModEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<FenrirEntity>> FENRIR = ENTITY_TYPES.registerEntityType("fenrir", FenrirEntity::new, MobCategory.MONSTER,
             builder -> builder
                     .sized(2.2F, 2.3F)
-                    .eyeHeight(1.85F)
+                    .eyeHeight(2.6F)
                     .clientTrackingRange(16)
-                    .updateInterval(2));
+                    .updateInterval(1));
 
     public static final DeferredHolder<EntityType<?>, EntityType<LeviathanAxeEntity>> LEVIATHAN_AXE_PROJECTILE = ENTITY_TYPES.registerEntityType("leviathan_axe_projectile", LeviathanAxeEntity::new, MobCategory.MISC,
             builder -> builder
@@ -61,6 +99,10 @@ public final class ModEntities {
                     .sized(0.8F, 2.6F)
                     .clientTrackingRange(10)
                     .updateInterval(2));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<FenrirIceOrbEntity>> FENRIR_ICE_ORB = ENTITY_TYPES.registerEntityType(
+            "fenrir_ice_orb", FenrirIceOrbEntity::new, MobCategory.MISC,
+            builder -> builder.sized(0.85F, 0.85F).clientTrackingRange(16).updateInterval(1));
 
     private ModEntities() {
     }

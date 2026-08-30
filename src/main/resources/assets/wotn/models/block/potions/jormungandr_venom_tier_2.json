@@ -1,0 +1,9 @@
+{
+  "parent": "wotn:item/potions/potion_tier_2",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "0": "wotn:block/potions/green_liquid",
+    "1": "wotn:block/potions/white_bottle_tier_2",
+    "particle": "wotn:block/potions/green_liquid"
+  }
+}

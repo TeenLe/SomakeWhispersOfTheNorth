@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "wotn:block/fenrir_seal",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "wotn:block/fenrir_seal",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "wotn:block/fenrir_seal",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "wotn:block/fenrir_seal",
+      "x": 90,
+      "y": 180
+    },
+    "facing=up": {
+      "model": "wotn:block/fenrir_seal"
+    },
+    "facing=west": {
+      "model": "wotn:block/fenrir_seal",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

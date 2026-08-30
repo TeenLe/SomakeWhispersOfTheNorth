@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "wotn:item/yggdrasil_leaf_litter"
+    "layer0": "wotn:block/yggdrasil_leaf_litter"
   }
 }

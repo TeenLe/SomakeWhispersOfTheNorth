@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "wotn:block/stripped_idunn_log",
+    "side": "wotn:block/stripped_idunn_log"
+  }
+}

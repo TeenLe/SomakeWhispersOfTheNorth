@@ -24,7 +24,11 @@ sourceSets.main.resources {
 
     // Exclude common development only resources from finalized outputs
     exclude("**/*.bbmodel") // BlockBench project files
-    exclude("src/generated/**/.cache") // datagen cache files
+    exclude("**/.cache/**") // datagen cache files from every generated resource root
+}
+
+tasks.withType(ProcessResources).configureEach {
+    includeEmptyDirs = false
 }
 
 repositories {
@@ -38,6 +42,10 @@ repositories {
 
 base {
     archivesName = mod_id
+}
+
+tasks.named('jar', Jar).configure {
+    from('LICENSE')
 }
 
 // Mojang ships Java 25 to end users in 26.1, so mods should target Java 25.
@@ -170,7 +178,7 @@ publishing {
     }
     repositories {
         maven {
-            url "file://${project.projectDir}/repo"
+            url = project.uri("${project.projectDir}/repo")
         }
     }
 }

@@ -16,7 +16,7 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
 public final class LeviathanAxeClient {
     private static final Identifier HUD_LAYER = Identifier.fromNamespaceAndPath(WhispersOfTheNorth.MODID, "leviathan_axe_hud");
-    private static final Identifier ICON = Identifier.fromNamespaceAndPath(WhispersOfTheNorth.MODID, "textures/gui/ice_skill.png");
+    private static final Identifier ICON = Identifier.fromNamespaceAndPath(WhispersOfTheNorth.MODID, "textures/gui/throw.png");
     private static int remainingTicks;
     private static int totalTicks = 1;
     private static int readyPulseTicks;
@@ -64,6 +64,7 @@ public final class LeviathanAxeClient {
     public static void applyCooldown(LeviathanAxeCooldownPayload payload) {
         remainingTicks = Math.max(0, payload.remainingTicks());
         totalTicks = Math.max(1, payload.totalTicks());
+        deniedPulseTicks = payload.denied() ? 14 : 0;
         wasCoolingDown = remainingTicks > 0;
     }
 

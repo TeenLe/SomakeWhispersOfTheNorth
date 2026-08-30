@@ -1,0 +1,9 @@
+{
+  "parent": "wotn:item/potions/potion_tier_3",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "0": "wotn:block/potions/dark_blue_liquid",
+    "1": "wotn:block/potions/black_bottle_tier_3",
+    "particle": "wotn:block/potions/dark_blue_liquid"
+  }
+}

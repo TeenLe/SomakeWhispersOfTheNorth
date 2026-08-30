@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "wotn:item/runes/jormungandr_2_slot_special"
+  }
+}

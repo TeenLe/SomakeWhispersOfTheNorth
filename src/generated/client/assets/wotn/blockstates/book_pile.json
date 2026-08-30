@@ -1,0 +1,104 @@
+{
+  "variants": {
+    "format=1": [
+      {
+        "model": "wotn:block/book_pile_v1"
+      },
+      {
+        "model": "wotn:block/book_pile_v1_2"
+      },
+      {
+        "model": "wotn:block/book_pile_v1_3"
+      },
+      {
+        "model": "wotn:block/book_pile_v1_4"
+      },
+      {
+        "model": "wotn:block/book_pile_v1_5"
+      },
+      {
+        "model": "wotn:block/book_pile_v1_6"
+      }
+    ],
+    "format=2": [
+      {
+        "model": "wotn:block/book_pile_v2"
+      },
+      {
+        "model": "wotn:block/book_pile_v2_2"
+      },
+      {
+        "model": "wotn:block/book_pile_v2_3"
+      },
+      {
+        "model": "wotn:block/book_pile_v2_4"
+      },
+      {
+        "model": "wotn:block/book_pile_v2_5"
+      },
+      {
+        "model": "wotn:block/book_pile_v2_6"
+      }
+    ],
+    "format=3": [
+      {
+        "model": "wotn:block/book_pile_v3"
+      },
+      {
+        "model": "wotn:block/book_pile_v3_2"
+      },
+      {
+        "model": "wotn:block/book_pile_v3_3"
+      },
+      {
+        "model": "wotn:block/book_pile_v3_4"
+      },
+      {
+        "model": "wotn:block/book_pile_v3_5"
+      },
+      {
+        "model": "wotn:block/book_pile_v3_6"
+      }
+    ],
+    "format=4": [
+      {
+        "model": "wotn:block/book_pile_v4"
+      },
+      {
+        "model": "wotn:block/book_pile_v4_2"
+      },
+      {
+        "model": "wotn:block/book_pile_v4_3"
+      },
+      {
+        "model": "wotn:block/book_pile_v4_4"
+      },
+      {
+        "model": "wotn:block/book_pile_v4_5"
+      },
+      {
+        "model": "wotn:block/book_pile_v4_6"
+      }
+    ],
+    "format=5": [
+      {
+        "model": "wotn:block/book_pile_v5"
+      },
+      {
+        "model": "wotn:block/book_pile_v5_2"
+      },
+      {
+        "model": "wotn:block/book_pile_v5_3"
+      },
+      {
+        "model": "wotn:block/book_pile_v5_4"
+      },
+      {
+        "model": "wotn:block/book_pile_v5_5"
+      },
+      {
+        "model": "wotn:block/book_pile_v5_6"
+      }
+    ]
+  }
+}

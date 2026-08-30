@@ -3,6 +3,8 @@ package com.somake.wotn.data;
 import java.util.concurrent.CompletableFuture;
 
 import com.somake.wotn.WhispersOfTheNorth;
+import com.somake.wotn.alchemy.AlchemyRune;
+import com.somake.wotn.registry.ModItems;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -11,6 +13,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.BlockTagCopyingItemTagProvider;
+import net.neoforged.neoforge.common.Tags;
 
 public final class ModItemTagsProvider extends BlockTagCopyingItemTagProvider {
     public ModItemTagsProvider(
@@ -23,6 +26,7 @@ public final class ModItemTagsProvider extends BlockTagCopyingItemTagProvider {
     @Override
     protected void addTags(HolderLookup.Provider provider) {
         copy(ModTags.YGGDRASIL_LOGS_BLOCK, ModTags.YGGDRASIL_LOGS_ITEM);
+        copy(ModTags.IDUNN_LOGS_BLOCK, ModTags.IDUNN_LOGS_ITEM);
         copy(BlockTags.LOGS, ItemTags.LOGS);
         copy(BlockTags.LOGS_THAT_BURN, ItemTags.LOGS_THAT_BURN);
         copy(BlockTags.PLANKS, ItemTags.PLANKS);
@@ -37,5 +41,17 @@ public final class ModItemTagsProvider extends BlockTagCopyingItemTagProvider {
         copy(BlockTags.LEAVES, ItemTags.LEAVES);
         copy(BlockTags.SAPLINGS, ItemTags.SAPLINGS);
         copy(BlockTags.WOODEN_SHELVES, ItemTags.WOODEN_SHELVES);
+        tag(ItemTags.FOX_FOOD).add(ModItems.BILBERRY.get());
+        tag(ItemTags.SWORDS).add(ModItems.DRAUGR_SWORD.get());
+        tag(Tags.Items.FOODS_BERRY).add(ModItems.BILBERRY.get());
+        tag(Tags.Items.BONES).add(ModItems.ICE_BONE.get());
+        tag(Tags.Items.MELEE_WEAPON_TOOLS).add(ModItems.DRAUGR_SWORD.get());
+        tag(ModTags.NIFLHEIM_RUNES_ITEM).add(
+                ModItems.runeItem(AlchemyRune.GLACIAL_DURATION).get(),
+                ModItems.runeItem(AlchemyRune.GLACIAL_POWER).get(),
+                ModItems.runeItem(AlchemyRune.FROST_MIST).get(),
+                ModItems.runeItem(AlchemyRune.WHITEOUT).get(),
+                ModItems.runeItem(AlchemyRune.RIME_MARK).get(),
+                ModItems.runeItem(AlchemyRune.ABSOLUTE_ZERO).get());
     }
 }

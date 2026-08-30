@@ -1,0 +1,49 @@
+{
+  "family": "niflheim",
+  "tier": 1,
+  "result": "wotn:niflheim_essence_tier_1",
+  "analysis_ticks": 1200,
+  "study_ingredients": [
+    {
+      "item": "wotn:ice_bone",
+      "count": 4
+    },
+    {
+      "item": "minecraft:packed_ice",
+      "count": 4
+    },
+    {
+      "item": "minecraft:snowball",
+      "count": 4
+    },
+    {
+      "item": "minecraft:glowstone_dust",
+      "count": 9
+    }
+  ],
+  "brewing_ingredients": [
+    {
+      "item": "minecraft:potion",
+      "components": {
+        "minecraft:potion_contents": "minecraft:strong_slowness"
+      },
+      "count": 1
+    },
+    {
+      "item": "minecraft:packed_ice",
+      "count": 1
+    },
+    {
+      "item": "minecraft:glowstone_dust",
+      "count": 1
+    },
+    {
+      "item": "wotn:ice_bone",
+      "count": 4
+    }
+  ],
+  "hidden_title": "screen.wotn.alchemy.hidden.niflheim.1",
+  "hint": "screen.wotn.alchemy.hint.niflheim.1",
+  "description": "screen.wotn.alchemy.description.niflheim",
+  "role": "screen.wotn.alchemy.role.defense"
+}

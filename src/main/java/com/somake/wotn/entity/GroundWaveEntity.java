@@ -95,6 +95,11 @@ public class GroundWaveEntity extends Entity implements GeoEntity {
     }
 
     @Override
+    public boolean shouldBeSaved() {
+        return false;
+    }
+
+    @Override
     public PushReaction getPistonPushReaction() {
         return PushReaction.IGNORE;
     }

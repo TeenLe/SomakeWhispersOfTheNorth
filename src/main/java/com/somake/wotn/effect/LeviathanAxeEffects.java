@@ -20,7 +20,8 @@ public final class LeviathanAxeEffects {
 
     public static void spawnThrow(ServerLevel level, Entity source, Vec3 direction) {
         Vec3 origin = source.getEyePosition().add(direction.normalize().scale(0.65D));
-        level.sendParticles(ParticleTypes.SNOWFLAKE, origin.x, origin.y, origin.z,
+        ParticleHelper.spawnLayeredSnowflakes(level, ParticleHelper.SNOWFLAKE_BURST, 0.38F,
+                origin.x, origin.y, origin.z,
                 8, 0.18D, 0.18D, 0.18D, 0.025D);
         level.playSound(null, origin.x, origin.y, origin.z, SoundEvents.AMETHYST_BLOCK_CHIME,
                 SoundSource.PLAYERS, 0.28F, 1.55F);
@@ -37,7 +38,8 @@ public final class LeviathanAxeEffects {
         spawnIceShards(level, position, direction, blockImpact ? 9 : 7, blockImpact ? 0.42F : 0.34F);
         level.sendParticles(ParticleTypes.ITEM_SNOWBALL, position.x, position.y, position.z,
                 blockImpact ? 10 : 7, 0.3D, 0.25D, 0.3D, 0.08D);
-        level.sendParticles(ParticleTypes.SNOWFLAKE, position.x, position.y, position.z,
+        ParticleHelper.spawnLayeredSnowflakes(level, ParticleHelper.SNOWFLAKE_BURST, 0.32F,
+                position.x, position.y, position.z,
                 blockImpact ? 32 : 24,
                 blockImpact ? 0.62D : 0.5D,
                 blockImpact ? 0.52D : 0.42D,
@@ -54,7 +56,8 @@ public final class LeviathanAxeEffects {
         ParticleHelper.spawnImpactRing(level, center.x, center.y, center.z,
                 0.22F, 0.82F, 1.0F, 0.5F, 0.48F,
                 Math.max(1.1F, target.getBbWidth() * 1.15F), 9, RingBehavior.GROW_THEN_SHRINK);
-        level.sendParticles(ParticleTypes.SNOWFLAKE, center.x, center.y, center.z,
+        ParticleHelper.spawnLayeredSnowflakes(level, ParticleHelper.SNOWFLAKE_AURA, 0.4F,
+                center.x, center.y, center.z,
                 10, target.getBbWidth() * 0.45D, target.getBbHeight() * 0.4D,
                 target.getBbWidth() * 0.45D, 0.02D);
         level.playSound(null, center.x, center.y, center.z, SoundEvents.AMETHYST_BLOCK_CHIME,
@@ -65,7 +68,8 @@ public final class LeviathanAxeEffects {
         Vec3 center = target.position().add(0.0D, target.getBbHeight() * 0.52D, 0.0D);
         Vec3 normal = direction.lengthSqr() > 1.0E-6D ? direction.normalize() : new Vec3(0.0D, 0.15D, 0.0D);
         spawnIceShards(level, center, normal, projectile ? 9 : 6, projectile ? 0.38F : 0.3F);
-        level.sendParticles(ParticleTypes.SNOWFLAKE, center.x, center.y, center.z,
+        ParticleHelper.spawnLayeredSnowflakes(level, ParticleHelper.SNOWFLAKE_BURST, 0.35F,
+                center.x, center.y, center.z,
                 projectile ? 22 : 14, target.getBbWidth() * 0.38D, target.getBbHeight() * 0.24D,
                 target.getBbWidth() * 0.38D, projectile ? 0.13D : 0.09D);
         level.sendParticles(ParticleTypes.ITEM_SNOWBALL, center.x, center.y, center.z,
@@ -80,7 +84,8 @@ public final class LeviathanAxeEffects {
         level.sendParticles(ParticleTypes.ITEM_SNOWBALL, center.x, center.y, center.z,
                 10, target.getBbWidth() * 0.45D, target.getBbHeight() * 0.3D,
                 target.getBbWidth() * 0.45D, 0.08D);
-        level.sendParticles(ParticleTypes.SNOWFLAKE, center.x, center.y, center.z,
+        ParticleHelper.spawnLayeredSnowflakes(level, ParticleHelper.SNOWFLAKE_BURST, 0.42F,
+                center.x, center.y, center.z,
                 12, target.getBbWidth() * 0.55D, target.getBbHeight() * 0.4D,
                 target.getBbWidth() * 0.55D, 0.04D);
         level.playSound(null, center.x, center.y, center.z, SoundEvents.GLASS_BREAK,

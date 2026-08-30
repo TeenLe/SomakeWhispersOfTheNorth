@@ -1,0 +1,39 @@
+{
+  "parent": "wotn:block/alchemist_cauldron",
+  "gui_light": "side",
+  "display": {
+    "gui": {
+      "rotation": [30, 225, 0],
+      "translation": [0, 1.25, 0],
+      "scale": [0.208, 0.208, 0.208]
+    },
+    "ground": {
+      "translation": [0, 3.5, 0],
+      "scale": [0.083, 0.083, 0.083]
+    },
+    "fixed": {
+      "translation": [0, 1, 0],
+      "scale": [0.167, 0.167, 0.167]
+    },
+    "thirdperson_righthand": {
+      "rotation": [75, 45, 0],
+      "translation": [0, 3.25, 0],
+      "scale": [0.125, 0.125, 0.125]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [75, 225, 0],
+      "translation": [0, 3.25, 0],
+      "scale": [0.125, 0.125, 0.125]
+    },
+    "firstperson_righthand": {
+      "rotation": [0, 45, 0],
+      "translation": [0, 0.8, 0],
+      "scale": [0.133, 0.133, 0.133]
+    },
+    "firstperson_lefthand": {
+      "rotation": [0, 225, 0],
+      "translation": [0, 0.8, 0],
+      "scale": [0.133, 0.133, 0.133]
+    }
+  }
+}

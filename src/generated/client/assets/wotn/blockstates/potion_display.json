@@ -1,0 +1,184 @@
+{
+  "variants": {
+    "facing=east,family=fenrir,tier=1": {
+      "model": "wotn:block/potions/fenrir_blood_tier_1",
+      "y": 90
+    },
+    "facing=east,family=fenrir,tier=2": {
+      "model": "wotn:block/potions/fenrir_blood_tier_2",
+      "y": 90
+    },
+    "facing=east,family=fenrir,tier=3": {
+      "model": "wotn:block/potions/fenrir_blood_tier_3",
+      "y": 90
+    },
+    "facing=east,family=idunn,tier=1": {
+      "model": "wotn:block/potions/idunn_elixir_tier_1",
+      "y": 90
+    },
+    "facing=east,family=idunn,tier=2": {
+      "model": "wotn:block/potions/idunn_elixir_tier_2",
+      "y": 90
+    },
+    "facing=east,family=idunn,tier=3": {
+      "model": "wotn:block/potions/idunn_elixir_tier_3",
+      "y": 90
+    },
+    "facing=east,family=jormungandr,tier=1": {
+      "model": "wotn:block/potions/jormungandr_venom_tier_1",
+      "y": 90
+    },
+    "facing=east,family=jormungandr,tier=2": {
+      "model": "wotn:block/potions/jormungandr_venom_tier_2",
+      "y": 90
+    },
+    "facing=east,family=jormungandr,tier=3": {
+      "model": "wotn:block/potions/jormungandr_venom_tier_3",
+      "y": 90
+    },
+    "facing=east,family=niflheim,tier=1": {
+      "model": "wotn:block/potions/niflheim_essence_tier_1",
+      "y": 90
+    },
+    "facing=east,family=niflheim,tier=2": {
+      "model": "wotn:block/potions/niflheim_essence_tier_2",
+      "y": 90
+    },
+    "facing=east,family=niflheim,tier=3": {
+      "model": "wotn:block/potions/niflheim_essence_tier_3",
+      "y": 90
+    },
+    "facing=north,family=fenrir,tier=1": {
+      "model": "wotn:block/potions/fenrir_blood_tier_1"
+    },
+    "facing=north,family=fenrir,tier=2": {
+      "model": "wotn:block/potions/fenrir_blood_tier_2"
+    },
+    "facing=north,family=fenrir,tier=3": {
+      "model": "wotn:block/potions/fenrir_blood_tier_3"
+    },
+    "facing=north,family=idunn,tier=1": {
+      "model": "wotn:block/potions/idunn_elixir_tier_1"
+    },
+    "facing=north,family=idunn,tier=2": {
+      "model": "wotn:block/potions/idunn_elixir_tier_2"
+    },
+    "facing=north,family=idunn,tier=3": {
+      "model": "wotn:block/potions/idunn_elixir_tier_3"
+    },
+    "facing=north,family=jormungandr,tier=1": {
+      "model": "wotn:block/potions/jormungandr_venom_tier_1"
+    },
+    "facing=north,family=jormungandr,tier=2": {
+      "model": "wotn:block/potions/jormungandr_venom_tier_2"
+    },
+    "facing=north,family=jormungandr,tier=3": {
+      "model": "wotn:block/potions/jormungandr_venom_tier_3"
+    },
+    "facing=north,family=niflheim,tier=1": {
+      "model": "wotn:block/potions/niflheim_essence_tier_1"
+    },
+    "facing=north,family=niflheim,tier=2": {
+      "model": "wotn:block/potions/niflheim_essence_tier_2"
+    },
+    "facing=north,family=niflheim,tier=3": {
+      "model": "wotn:block/potions/niflheim_essence_tier_3"
+    },
+    "facing=south,family=fenrir,tier=1": {
+      "model": "wotn:block/potions/fenrir_blood_tier_1",
+      "y": 180
+    },
+    "facing=south,family=fenrir,tier=2": {
+      "model": "wotn:block/potions/fenrir_blood_tier_2",
+      "y": 180
+    },
+    "facing=south,family=fenrir,tier=3": {
+      "model": "wotn:block/potions/fenrir_blood_tier_3",
+      "y": 180
+    },
+    "facing=south,family=idunn,tier=1": {
+      "model": "wotn:block/potions/idunn_elixir_tier_1",
+      "y": 180
+    },
+    "facing=south,family=idunn,tier=2": {
+      "model": "wotn:block/potions/idunn_elixir_tier_2",
+      "y": 180
+    },
+    "facing=south,family=idunn,tier=3": {
+      "model": "wotn:block/potions/idunn_elixir_tier_3",
+      "y": 180
+    },
+    "facing=south,family=jormungandr,tier=1": {
+      "model": "wotn:block/potions/jormungandr_venom_tier_1",
+      "y": 180
+    },
+    "facing=south,family=jormungandr,tier=2": {
+      "model": "wotn:block/potions/jormungandr_venom_tier_2",
+      "y": 180
+    },
+    "facing=south,family=jormungandr,tier=3": {
+      "model": "wotn:block/potions/jormungandr_venom_tier_3",
+      "y": 180
+    },
+    "facing=south,family=niflheim,tier=1": {
+      "model": "wotn:block/potions/niflheim_essence_tier_1",
+      "y": 180
+    },
+    "facing=south,family=niflheim,tier=2": {
+      "model": "wotn:block/potions/niflheim_essence_tier_2",
+      "y": 180
+    },
+    "facing=south,family=niflheim,tier=3": {
+      "model": "wotn:block/potions/niflheim_essence_tier_3",
+      "y": 180
+    },
+    "facing=west,family=fenrir,tier=1": {
+      "model": "wotn:block/potions/fenrir_blood_tier_1",
+      "y": 270
+    },
+    "facing=west,family=fenrir,tier=2": {
+      "model": "wotn:block/potions/fenrir_blood_tier_2",
+      "y": 270
+    },
+    "facing=west,family=fenrir,tier=3": {
+      "model": "wotn:block/potions/fenrir_blood_tier_3",
+      "y": 270
+    },
+    "facing=west,family=idunn,tier=1": {
+      "model": "wotn:block/potions/idunn_elixir_tier_1",
+      "y": 270
+    },
+    "facing=west,family=idunn,tier=2": {
+      "model": "wotn:block/potions/idunn_elixir_tier_2",
+      "y": 270
+    },
+    "facing=west,family=idunn,tier=3": {
+      "model": "wotn:block/potions/idunn_elixir_tier_3",
+      "y": 270
+    },
+    "facing=west,family=jormungandr,tier=1": {
+      "model": "wotn:block/potions/jormungandr_venom_tier_1",
+      "y": 270
+    },
+    "facing=west,family=jormungandr,tier=2": {
+      "model": "wotn:block/potions/jormungandr_venom_tier_2",
+      "y": 270
+    },
+    "facing=west,family=jormungandr,tier=3": {
+      "model": "wotn:block/potions/jormungandr_venom_tier_3",
+      "y": 270
+    },
+    "facing=west,family=niflheim,tier=1": {
+      "model": "wotn:block/potions/niflheim_essence_tier_1",
+      "y": 270
+    },
+    "facing=west,family=niflheim,tier=2": {
+      "model": "wotn:block/potions/niflheim_essence_tier_2",
+      "y": 270
+    },
+    "facing=west,family=niflheim,tier=3": {
+      "model": "wotn:block/potions/niflheim_essence_tier_3",
+      "y": 270
+    }
+  }
+}

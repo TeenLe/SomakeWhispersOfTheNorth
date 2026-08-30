@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "wotn:block/idunn_slab"
+    },
+    "type=double": {
+      "model": "wotn:block/idunn_planks"
+    },
+    "type=top": {
+      "model": "wotn:block/idunn_slab_top"
+    }
+  }
+}

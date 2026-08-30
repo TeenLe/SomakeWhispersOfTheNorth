@@ -3,6 +3,7 @@ package com.somake.wotn.client;
 import com.somake.wotn.WhispersOfTheNorth;
 import com.somake.wotn.network.LeviathanImbueStatePayload;
 import com.somake.wotn.registry.ModItems;
+import com.somake.wotn.particle.ParticleHelper;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -22,7 +23,7 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 public final class LeviathanImbueClient {
     private static final int ACTIVATION_ANIMATION_TICKS = 28;
     private static final Identifier HUD_LAYER = Identifier.fromNamespaceAndPath(WhispersOfTheNorth.MODID, "leviathan_imbue_hud");
-    private static final Identifier ICON = Identifier.fromNamespaceAndPath(WhispersOfTheNorth.MODID, "textures/gui/ice_skill.png");
+    private static final Identifier ICON = Identifier.fromNamespaceAndPath(WhispersOfTheNorth.MODID, "textures/gui/imbue.png");
     private static int activeTicks;
     private static int cooldownTicks;
     private static int deniedPulseTicks;
@@ -77,7 +78,12 @@ public final class LeviathanImbueClient {
             double yaw = player.getYRot() * Mth.DEG_TO_RAD;
             double x = player.getX() + Math.cos(yaw) * side;
             double z = player.getZ() + Math.sin(yaw) * side;
-            player.level().addParticle(ParticleTypes.SNOWFLAKE, x, player.getEyeY() - 0.55D, z, 0, 0.015D, 0);
+            player.level().addParticle(ParticleTypes.SNOWFLAKE,
+                    x, player.getEyeY() - 0.55D, z, 0.0D, 0.015D, 0.0D);
+            if (player.tickCount % 4 == 0) {
+                ParticleHelper.spawnSnowflake(player.level(), ParticleHelper.SNOWFLAKE_AURA,
+                        x, player.getEyeY() - 0.55D, z, 0.0D, 0.012D, 0.0D);
+            }
             if (player.tickCount % 4 == 0) {
                 player.level().addParticle(new DustColorTransitionOptions(0x35D8FF, 0xF2FFFF, 0.65F), x, player.getEyeY() - 0.55D, z, 0, 0, 0);
             }
@@ -114,6 +120,11 @@ public final class LeviathanImbueClient {
                     .add(tangent.scale(0.045D * (1.0D - easedProgress)));
             player.level().addParticle(ParticleTypes.SNOWFLAKE, spawn.x, spawn.y, spawn.z,
                     velocity.x, velocity.y, velocity.z);
+            if ((i & 1) == 0) {
+                ParticleHelper.spawnSnowflake(player.level(), ParticleHelper.SNOWFLAKE_AURA,
+                        spawn.x, spawn.y, spawn.z,
+                        velocity.x * 0.8D, velocity.y * 0.8D, velocity.z * 0.8D);
+            }
             if ((i & 1) == 0 && ticksLeft % 2 == 0) {
                 player.level().addParticle(new DustColorTransitionOptions(0x28CFFF, 0xF4FFFF, 0.7F),
                         spawn.x, spawn.y, spawn.z, velocity.x, velocity.y, velocity.z);
@@ -141,8 +152,18 @@ public final class LeviathanImbueClient {
             Vec3 velocity = new Vec3(random.nextGaussian() * 0.09D,
                     0.04D + random.nextDouble() * 0.12D,
                     random.nextGaussian() * 0.09D);
-            player.level().addParticle(i < 2 ? ice : ParticleTypes.SNOWFLAKE,
-                    origin.x, origin.y, origin.z, velocity.x, velocity.y, velocity.z);
+            if (i < 2) {
+                player.level().addParticle(ice, origin.x, origin.y, origin.z,
+                        velocity.x, velocity.y, velocity.z);
+            } else {
+                player.level().addParticle(ParticleTypes.SNOWFLAKE,
+                        origin.x, origin.y, origin.z, velocity.x, velocity.y, velocity.z);
+                if (i == 3) {
+                    ParticleHelper.spawnSnowflake(player.level(), ParticleHelper.SNOWFLAKE_BURST,
+                            origin.x, origin.y, origin.z,
+                            velocity.x * 0.75D, velocity.y * 0.75D, velocity.z * 0.75D);
+                }
+            }
         }
     }
 

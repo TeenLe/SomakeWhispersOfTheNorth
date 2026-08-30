@@ -1,0 +1,16 @@
+{
+  "values": {
+    "wotn:yggdrasil_log": {
+      "stripped_block": "wotn:stripped_yggdrasil_log"
+    },
+    "wotn:yggdrasil_wood": {
+      "stripped_block": "wotn:stripped_yggdrasil_wood"
+    },
+    "wotn:idunn_log": {
+      "stripped_block": "wotn:stripped_idunn_log"
+    },
+    "wotn:idunn_wood": {
+      "stripped_block": "wotn:stripped_idunn_wood"
+    }
+  }
+}

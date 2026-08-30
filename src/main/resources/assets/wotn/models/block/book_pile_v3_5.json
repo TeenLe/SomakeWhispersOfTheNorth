@@ -1,0 +1,7 @@
+{
+  "parent": "wotn:block/book_pile_v3",
+  "textures": {
+    "1": "wotn:block/books/cyan_book",
+    "particle": "wotn:block/books/cyan_book"
+  }
+}

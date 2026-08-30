@@ -111,7 +111,7 @@
 			}
 		},
 		"animation.stone_slime.walk": {
-			"loop": true,
+			"loop": false,
 			"animation_length": 1.7917,
 			"bones": {
 				"Root": {

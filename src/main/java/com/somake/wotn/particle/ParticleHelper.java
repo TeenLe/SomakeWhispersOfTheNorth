@@ -7,6 +7,7 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -15,6 +16,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public final class ParticleHelper {
+    public static final SnowflakeParticleData SNOWFLAKE_TRAIL = SnowflakeParticleData.DEFAULT
+            .withLifetime(20).withScale(0.105F).withMotion(0.012F, 0.92F).withFadeOut(0.45F);
+    public static final SnowflakeParticleData SNOWFLAKE_BURST = SnowflakeParticleData.DEFAULT
+            .withLifetime(24).withScale(0.14F).withMotion(0.035F, 0.9F).withFadeOut(0.38F);
+    public static final SnowflakeParticleData SNOWFLAKE_AURA = SnowflakeParticleData.DEFAULT
+            .withLifetime(30).withScale(0.12F).withMotion(0.015F, 0.95F).withFadeOut(0.48F);
+    public static final SnowflakeParticleData SNOWFLAKE_MIST = SnowflakeParticleData.DEFAULT
+            .withLifetime(38).withScale(0.135F).withMotion(0.01F, 0.97F).withFadeOut(0.5F)
+            .withAlpha(0.82F).withEmissive(false);
+
     private ParticleHelper() {
     }
 
@@ -43,6 +54,111 @@ public final class ParticleHelper {
         }
 
         level.addParticle(particle, x, y, z, 0.0D, 0.0D, 0.0D);
+    }
+
+    public static void spawnSnowflakes(Level level, SnowflakeParticleData particle,
+            double x, double y, double z, int count,
+            double spreadX, double spreadY, double spreadZ, double speed) {
+        if (count <= 0) {
+            return;
+        }
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(particle, x, y, z, count, spreadX, spreadY, spreadZ, speed);
+            return;
+        }
+
+        for (int i = 0; i < count; i++) {
+            double px = x + level.getRandom().nextGaussian() * spreadX;
+            double py = y + level.getRandom().nextGaussian() * spreadY;
+            double pz = z + level.getRandom().nextGaussian() * spreadZ;
+            double motionX = level.getRandom().nextGaussian() * speed;
+            double motionY = level.getRandom().nextGaussian() * speed;
+            double motionZ = level.getRandom().nextGaussian() * speed;
+            level.addParticle(particle, px, py, pz, motionX, motionY, motionZ);
+        }
+    }
+
+    public static void spawnLayeredSnowflakes(Level level, SnowflakeParticleData customParticle, float customFraction,
+            double x, double y, double z, int count,
+            double spreadX, double spreadY, double spreadZ, double speed) {
+        int total = Math.max(0, count);
+        if (total <= 0) {
+            return;
+        }
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.SNOWFLAKE, x, y, z, total,
+                    spreadX, spreadY, spreadZ, speed);
+        } else {
+            spawnVanillaSnowflakes(level, x, y, z, total, spreadX, spreadY, spreadZ, speed);
+        }
+
+        int customCount = Mth.clamp(Math.round(total * customFraction), 0, total);
+        spawnSnowflakes(level, customParticle, x, y, z, customCount,
+                spreadX, spreadY, spreadZ, speed * 0.72D);
+    }
+
+    public static void spawnVanillaSnowflakes(Level level,
+            double x, double y, double z, int count,
+            double spreadX, double spreadY, double spreadZ, double speed) {
+        if (count <= 0) {
+            return;
+        }
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.SNOWFLAKE, x, y, z, count,
+                    spreadX, spreadY, spreadZ, speed);
+            return;
+        }
+        for (int i = 0; i < count; i++) {
+            level.addParticle(ParticleTypes.SNOWFLAKE,
+                    x + level.getRandom().nextGaussian() * spreadX,
+                    y + level.getRandom().nextGaussian() * spreadY,
+                    z + level.getRandom().nextGaussian() * spreadZ,
+                    level.getRandom().nextGaussian() * speed,
+                    level.getRandom().nextGaussian() * speed,
+                    level.getRandom().nextGaussian() * speed);
+        }
+    }
+
+    public static void spawnSnowflake(Level level, SnowflakeParticleData particle,
+            double x, double y, double z, double motionX, double motionY, double motionZ) {
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(particle, x, y, z, 0, motionX, motionY, motionZ, 1.0D);
+            return;
+        }
+        level.addParticle(particle, x, y, z, motionX, motionY, motionZ);
+    }
+
+    public static void spawnClawSlash(Level level, Entity source, Vec3 lockedDirection) {
+        Vec3 forward = lockedDirection == null
+                ? Vec3.ZERO
+                : new Vec3(lockedDirection.x, 0.0D, lockedDirection.z);
+        if (forward.lengthSqr() < 1.0E-6D) {
+            Vec3 look = source.getLookAngle();
+            forward = new Vec3(look.x, 0.0D, look.z);
+        }
+        if (forward.lengthSqr() < 1.0E-6D) return;
+        forward = forward.normalize();
+
+        ClawSlashParticleData particle = new ClawSlashParticleData((float) Mth.atan2(forward.x, forward.z));
+        Vec3 center = source.position().add(forward.scale(2.8D)).add(0.0D, 1.45D, 0.0D);
+        Vec3 velocity = forward.scale(0.09D);
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(particle, center.x, center.y, center.z,
+                    0, velocity.x, velocity.y, velocity.z, 1.0D);
+            return;
+        }
+        level.addParticle(particle, center.x, center.y, center.z,
+                velocity.x, velocity.y, velocity.z);
+    }
+
+    public static void spawnSnowflakesForPlayer(ServerPlayer player, SnowflakeParticleData particle,
+            double x, double y, double z, int count,
+            double spreadX, double spreadY, double spreadZ, double speed) {
+        if (!(player.level() instanceof ServerLevel level) || count <= 0) {
+            return;
+        }
+        level.sendParticles(player, particle, false, false,
+                x, y, z, count, spreadX, spreadY, spreadZ, speed);
     }
 
     public static void spawnGroundImpact(Level level, Entity entity,

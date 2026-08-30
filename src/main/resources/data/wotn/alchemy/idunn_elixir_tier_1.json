@@ -1,0 +1,49 @@
+{
+  "family": "idunn",
+  "tier": 1,
+  "result": "wotn:idunn_elixir_tier_1",
+  "analysis_ticks": 1200,
+  "study_ingredients": [
+    {
+      "item": "wotn:bilberry",
+      "count": 2
+    },
+    {
+      "item": "wotn:idunn_apple",
+      "count": 4
+    },
+    {
+      "item": "minecraft:sugar",
+      "count": 4
+    },
+    {
+      "item": "minecraft:glowstone_dust",
+      "count": 9
+    }
+  ],
+  "brewing_ingredients": [
+    {
+      "item": "minecraft:potion",
+      "components": {
+        "minecraft:potion_contents": "minecraft:strong_regeneration"
+      },
+      "count": 1
+    },
+    {
+      "item": "wotn:idunn_apple",
+      "count": 1
+    },
+    {
+      "item": "minecraft:glowstone_dust",
+      "count": 1
+    },
+    {
+      "item": "wotn:bilberry",
+      "count": 4
+    }
+  ],
+  "hidden_title": "screen.wotn.alchemy.hidden.idunn.1",
+  "hint": "screen.wotn.alchemy.hint.idunn.1",
+  "description": "screen.wotn.alchemy.description.idunn",
+  "role": "screen.wotn.alchemy.role.recovery"
+}

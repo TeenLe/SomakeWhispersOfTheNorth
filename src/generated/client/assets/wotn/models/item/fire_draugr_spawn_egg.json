@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "wotn:item/fire_draugr_spawn_egg"
+  }
+}

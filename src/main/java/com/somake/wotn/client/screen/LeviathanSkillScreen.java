@@ -1,5 +1,6 @@
 package com.somake.wotn.client.screen;
 
+import com.somake.wotn.WhispersOfTheNorth;
 import com.somake.wotn.client.LeviathanSkillSelection;
 import com.somake.wotn.client.renderer.state.ItemPreviewRenderState;
 import com.somake.wotn.network.CloseForgeSessionPayload;
@@ -12,13 +13,16 @@ import com.somake.wotn.network.UpdateForgeSessionPayload;
 import com.somake.wotn.skilltree.LeviathanSkillTree;
 import com.somake.wotn.skilltree.WeaponSkillProgress;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -28,6 +32,18 @@ import org.joml.Matrix3x2f;
 
 public final class LeviathanSkillScreen extends Screen {
     private static final int NODE_RADIUS = 12;
+    private static final int SKILL_ICON_SIZE = 16;
+    private static final int WEAPON_CARD_HEIGHT = 70;
+    private static final int WEAPON_ROW_STRIDE = 78;
+    private static final int WEAPON_LIST_TOP_OFFSET = 61;
+    private static final double WEAPON_SCROLL_STEP = 39.0D;
+    private static final int WEAPON_SCROLLBAR_MIN_THUMB = 12;
+    private static final Identifier THROW_ICON = Identifier.fromNamespaceAndPath(
+            WhispersOfTheNorth.MODID, "textures/gui/throw.png");
+    private static final Identifier IMBUE_ICON = Identifier.fromNamespaceAndPath(
+            WhispersOfTheNorth.MODID, "textures/gui/imbue.png");
+    private static final Identifier ICE_SPIKES_ICON = Identifier.fromNamespaceAndPath(
+            WhispersOfTheNorth.MODID, "textures/gui/ice_spikes.png");
 
     private final UUID sessionId;
     private List<ForgeWeaponSnapshot> weapons;
@@ -37,6 +53,9 @@ public final class LeviathanSkillScreen extends Screen {
     private int selectedLoadoutSlot = 2;
     private double treePanX;
     private double treePanY;
+    private double weaponScroll;
+    private int lastWeaponViewportHeight = -1;
+    private boolean revealSelectedWeapon = true;
     private int age;
     private int feedbackTicks;
     private boolean serverClosing;
@@ -53,6 +72,9 @@ public final class LeviathanSkillScreen extends Screen {
 
     public void update(UpdateForgeSessionPayload payload) {
         if (!sessionId.equals(payload.sessionId())) return;
+        if (!Objects.equals(this.selectedWeaponId, payload.selectedWeaponId())) {
+            this.revealSelectedWeapon = true;
+        }
         this.weapons = payload.weapons();
         this.selectedWeaponId = payload.selectedWeaponId();
         this.feedbackTicks = 18;
@@ -119,12 +141,22 @@ public final class LeviathanSkillScreen extends Screen {
     private void drawWeaponRail(GuiGraphicsExtractor g, Layout l, int mouseX, int mouseY, float time) {
         int cx = l.x + (l.railRight - l.x) / 2;
         g.centeredText(font, Component.translatable("screen.wotn.mastery.weapons"), cx, l.y + 45, 0xFF7898A3);
-        int y = l.y + 61;
-        for (ForgeWeaponSnapshot weapon : weapons) {
+        prepareWeaponScroll(l);
+        int top = weaponViewportTop(l), bottom = weaponViewportBottom(l);
+        if (bottom <= top) return;
+        int scroll = Mth.floor(weaponScroll);
+        g.enableScissor(l.x + 5, top, l.railRight, bottom);
+        for (int i = 0; i < weapons.size(); i++) {
+            ForgeWeaponSnapshot weapon = weapons.get(i);
+            int y = top + i * WEAPON_ROW_STRIDE - scroll;
+            if (y + WEAPON_CARD_HEIGHT <= top || y >= bottom) continue;
             boolean selected = weapon.weaponId().equals(selectedWeaponId);
-            boolean hovered = mouseX >= l.x + 9 && mouseX <= l.railRight - 8 && mouseY >= y && mouseY <= y + 70;
-            g.fill(l.x + 9, y, l.railRight - 8, y + 70, selected ? 0xA51A333B : 0x70101F24);
-            g.outline(l.x + 9, y, l.railRight - l.x - 17, 70,
+            boolean hovered = mouseX >= l.x + 9 && mouseX < l.railRight - 8
+                    && mouseY >= top && mouseY < bottom
+                    && mouseY >= y && mouseY < y + WEAPON_CARD_HEIGHT;
+            g.fill(l.x + 9, y, l.railRight - 8, y + WEAPON_CARD_HEIGHT,
+                    selected ? 0xA51A333B : 0x70101F24);
+            g.outline(l.x + 9, y, l.railRight - l.x - 17, WEAPON_CARD_HEIGHT,
                     selected ? 0xFF69B7C8 : hovered ? 0xFF527F89 : 0xFF29434A);
             submitWeaponPreview(g, weapon.stack(), l.x + 13, y + 2, l.railRight - 12, y + 48,
                     34.0F, -18.0F, time * 0.65F, -28.0F);
@@ -132,12 +164,70 @@ public final class LeviathanSkillScreen extends Screen {
                     selected ? 0xFFDDFBFF : 0xFF819CA3);
             g.centeredText(font, Component.translatable("screen.wotn.mastery.level", weapon.progress().masteryLevel()),
                     cx, y + 62, selected ? 0xFFD9A85F : 0xFF576C72);
-            y += 78;
         }
         if (weapons.isEmpty()) {
             g.textWithWordWrap(font, Component.translatable("screen.wotn.mastery.no_eligible_weapons"),
-                    l.x + 14, l.y + 68, l.railRight - l.x - 28, 0xFF657D84, false);
+                    l.x + 14, top + 7, l.railRight - l.x - 28, 0xFF657D84, false);
         }
+        g.disableScissor();
+        drawWeaponScrollbar(g, l);
+    }
+
+    private void drawWeaponScrollbar(GuiGraphicsExtractor g, Layout l) {
+        int maxScroll = maxWeaponScroll(l);
+        if (maxScroll <= 0) return;
+        int top = weaponViewportTop(l), bottom = weaponViewportBottom(l), height = bottom - top;
+        int contentHeight = weaponContentHeight();
+        int thumbHeight = Math.min(height, Math.max(WEAPON_SCROLLBAR_MIN_THUMB,
+                (int) ((long) height * height / Math.max(height, contentHeight))));
+        int thumbY = top + Mth.floor((height - thumbHeight) * weaponScroll / maxScroll);
+        g.fill(l.railRight - 6, top, l.railRight - 3, bottom, 0x80132120);
+        g.fill(l.railRight - 6, thumbY, l.railRight - 3, thumbY + thumbHeight, 0xFF69B7C8);
+    }
+
+    private void prepareWeaponScroll(Layout l) {
+        int viewportHeight = weaponViewportHeight(l);
+        weaponScroll = Mth.clamp(weaponScroll, 0.0D, maxWeaponScroll(l));
+        if (revealSelectedWeapon || viewportHeight != lastWeaponViewportHeight) {
+            ensureSelectedWeaponVisible(l);
+            revealSelectedWeapon = false;
+        }
+        lastWeaponViewportHeight = viewportHeight;
+    }
+
+    private void ensureSelectedWeaponVisible(Layout l) {
+        if (selectedWeaponId == null) return;
+        int selectedIndex = -1;
+        for (int i = 0; i < weapons.size(); i++) {
+            if (weapons.get(i).weaponId().equals(selectedWeaponId)) {
+                selectedIndex = i;
+                break;
+            }
+        }
+        int viewportHeight = weaponViewportHeight(l);
+        if (selectedIndex < 0 || viewportHeight <= 0) return;
+        int selectedTop = selectedIndex * WEAPON_ROW_STRIDE;
+        int selectedBottom = selectedTop + WEAPON_CARD_HEIGHT;
+        double visibleBottom = weaponScroll + viewportHeight;
+        if (viewportHeight >= WEAPON_CARD_HEIGHT) {
+            if (selectedTop < weaponScroll) weaponScroll = selectedTop;
+            else if (selectedBottom > visibleBottom) weaponScroll = selectedBottom - viewportHeight;
+        } else if (selectedBottom <= weaponScroll || selectedTop >= visibleBottom) {
+            weaponScroll = selectedTop;
+        }
+        weaponScroll = Mth.clamp(weaponScroll, 0.0D, maxWeaponScroll(l));
+    }
+
+    private int weaponViewportTop(Layout l) { return l.y + WEAPON_LIST_TOP_OFFSET; }
+    private int weaponViewportBottom(Layout l) { return l.contentBottom; }
+    private int weaponViewportHeight(Layout l) {
+        return Math.max(0, weaponViewportBottom(l) - weaponViewportTop(l));
+    }
+    private int weaponContentHeight() {
+        return weapons.isEmpty() ? 0 : WEAPON_CARD_HEIGHT + (weapons.size() - 1) * WEAPON_ROW_STRIDE;
+    }
+    private int maxWeaponScroll(Layout l) {
+        return Math.max(0, weaponContentHeight() - weaponViewportHeight(l));
     }
 
     private void drawEmptyState(GuiGraphicsExtractor g, Layout l) {
@@ -188,39 +278,106 @@ public final class LeviathanSkillScreen extends Screen {
         int r = n.type() == LeviathanSkillTree.Type.ACTIVE ? NODE_RADIUS + 3 : NODE_RADIUS;
         int fill = unlocked ? 0xD01C4653 : available ? 0xB0263335 : 0xC0131A1D;
         int border = unlocked ? 0xFF72D5EE : available ? 0xFFD9A85F : n.implemented() ? 0xFF40545A : 0xFF29363A;
-        diamond(g, x, y, r, fill); diamondOutline(g, x, y, r, border);
+        Identifier icon = skillIcon(n.id());
+        diamond(g, x, y, r, fill);
+        if (icon != null) {
+            int iconOffset = SKILL_ICON_SIZE / 2;
+            g.blit(RenderPipelines.GUI_TEXTURED, icon, x - iconOffset, y - iconOffset, 0.0F, 0.0F,
+                    SKILL_ICON_SIZE, SKILL_ICON_SIZE, 16, 16, 16, 16);
+            if (!unlocked) {
+                diamond(g, x, y, r - 1, available ? 0x300A1317 : 0x880A1317);
+            }
+        }
+        diamondOutline(g, x, y, r, border);
         if (selected || hovered) diamondOutline(g, x, y, r + 5, selected ? 0xB0DDFBFF : 0x7072D5EE);
-        diamondOutline(g, x, y, 5, border);
+        if (icon == null) diamondOutline(g, x, y, 5, border);
         if (n.cost() > 0 && !unlocked) g.centeredText(font, Component.literal(Integer.toString(n.cost())), x, y + r + 3, available ? 0xFFD9A85F : 0xFF66767A);
     }
 
+    private static Identifier skillIcon(int nodeId) {
+        return switch (nodeId) {
+            case LeviathanSkillTree.THROW -> THROW_ICON;
+            case LeviathanSkillTree.IMBUE -> IMBUE_ICON;
+            case LeviathanSkillTree.ICE_SPIKES -> ICE_SPIKES_ICON;
+            default -> null;
+        };
+    }
+
     private void drawLoadout(GuiGraphicsExtractor g, Layout l, int mx, int my, float time) {
-        ForgeWeaponSnapshot w = selected(); int cx = (l.railRight + l.right()) / 2, cy = l.y + 120;
-        diamond(g, cx, cy, 31, 0x35265B68);
-        submitWeaponPreview(g, w.stack(), cx - 40, cy - 38, cx + 40, cy + 38, 35, -15, time * .72F, -25);
-        drawLoadoutSlot(g, 1, w.primarySkill(), cx - 84, cy, mx, my);
-        drawLoadoutSlot(g, 2, w.secondarySkill(), cx + 84, cy, mx, my);
-        g.centeredText(font, Component.translatable("screen.wotn.mastery.secondary_slot"), cx, cy + 42, 0xFFD9A85F);
-        int y = cy + 75;
-        drawRune(g, LeviathanSkillSelection.THROW, cx - 72, y, mx, my);
-        drawRune(g, LeviathanSkillSelection.IMBUE, cx, y, mx, my);
-        drawRune(g, LeviathanSkillSelection.ICE_SPIKES, cx + 72, y, mx, my);
+        ForgeWeaponSnapshot weapon = selected();
+        LoadoutLayout loadout = loadoutLayout(l);
+        TreeViewport viewport = treeViewport(l);
+        g.enableScissor(viewport.left, viewport.top, viewport.right, viewport.bottom);
+        if (loadout.showPreview) {
+            diamond(g, loadout.centerX, loadout.slotY, loadout.compact ? 25 : 31, 0x35265B68);
+            int previewRadius = loadout.compact ? 32 : 40;
+            submitWeaponPreview(g, weapon.stack(), loadout.centerX - previewRadius,
+                    loadout.slotY - previewRadius, loadout.centerX + previewRadius,
+                    loadout.slotY + previewRadius, loadout.compact ? 30 : 35,
+                    -15, time * .72F, -25);
+        }
+        drawLoadoutSlot(g, 1, weapon.primarySkill(), loadout.centerX - loadout.slotOffset,
+                loadout.slotY, mx, my, loadout.compact);
+        drawLoadoutSlot(g, 2, weapon.secondarySkill(), loadout.centerX + loadout.slotOffset,
+                loadout.slotY, mx, my, loadout.compact);
+        if (!loadout.compact) {
+            g.centeredText(font, Component.translatable("screen.wotn.mastery.secondary_slot"),
+                    loadout.centerX, loadout.slotY + 42, 0xFFD9A85F);
+        }
+        drawRune(g, LeviathanSkillSelection.THROW, loadout.centerX - loadout.runeOffset,
+                loadout.runeY, mx, my, loadout.compact);
+        drawRune(g, LeviathanSkillSelection.IMBUE, loadout.centerX,
+                loadout.runeY, mx, my, loadout.compact);
+        drawRune(g, LeviathanSkillSelection.ICE_SPIKES, loadout.centerX + loadout.runeOffset,
+                loadout.runeY, mx, my, loadout.compact);
+        g.disableScissor();
     }
 
-    private void drawLoadoutSlot(GuiGraphicsExtractor g, int slot, int skill, int x, int y, int mx, int my) {
+    private void drawLoadoutSlot(GuiGraphicsExtractor g, int slot, int skill, int x, int y, int mx, int my,
+            boolean compact) {
         int border = selectedLoadoutSlot == slot ? 0xFFD9A85F : nodeAt(mx, my, x, y) ? 0xFFDDFBFF : 0xFF72D5EE;
-        diamond(g, x, y, 21, 0xC0193942); diamondOutline(g, x, y, 21, border); diamondOutline(g, x, y, 7, border);
-        g.centeredText(font, Component.translatable("screen.wotn.mastery.slot", slot, LeviathanSkillSelection.keyMessage(slot)), x, y - 34, border);
-        Component name = skill == 0 ? Component.translatable("screen.wotn.mastery.empty_slot") : nodeName(LeviathanSkillTree.byId(nodeIdForSkill(skill)));
-        g.centeredText(font, name, x, y + 29, skill == 0 ? 0xFF60747A : 0xFFDDFBFF);
+        Identifier icon = skillIconForSkill(skill);
+        diamond(g, x, y, 21, 0xC0193942);
+        if (icon != null) drawSkillIcon(g, icon, x, y);
+        diamondOutline(g, x, y, 21, border);
+        if (icon == null) diamondOutline(g, x, y, 7, border);
+        if (!compact) {
+            g.centeredText(font, Component.translatable("screen.wotn.mastery.slot", slot,
+                    LeviathanSkillSelection.keyMessage(slot)), x, y - 34, border);
+            Component name = skill == 0 ? Component.translatable("screen.wotn.mastery.empty_slot")
+                    : nodeName(LeviathanSkillTree.byId(nodeIdForSkill(skill)));
+            g.centeredText(font, name, x, y + 29, skill == 0 ? 0xFF60747A : 0xFFDDFBFF);
+        }
     }
 
-    private void drawRune(GuiGraphicsExtractor g, int skill, int x, int y, int mx, int my) {
+    private void drawRune(GuiGraphicsExtractor g, int skill, int x, int y, int mx, int my, boolean compact) {
         int node = nodeIdForSkill(skill); boolean unlocked = progress().isUnlocked(node);
         int current = selectedLoadoutSlot == 1 ? selected().primarySkill() : selected().secondarySkill();
         int border = !unlocked ? 0xFF40545A : current == skill ? 0xFFD9A85F : 0xFF72D5EE;
-        diamond(g, x, y, 18, unlocked ? 0xC01A3C46 : 0xC012181B); diamondOutline(g, x, y, 18, border); diamondOutline(g, x, y, 7, border);
-        g.centeredText(font, nodeName(LeviathanSkillTree.byId(node)), x, y + 26, unlocked ? 0xFFB9DCE3 : 0xFF53666B);
+        diamond(g, x, y, 18, unlocked ? 0xC01A3C46 : 0xC012181B);
+        drawSkillIcon(g, skillIconForSkill(skill), x, y);
+        if (!unlocked) diamond(g, x, y, 17, 0x880A1317);
+        diamondOutline(g, x, y, 18, border);
+        if (!compact) {
+            g.centeredText(font, nodeName(LeviathanSkillTree.byId(node)), x, y + 26,
+                    unlocked ? 0xFFB9DCE3 : 0xFF53666B);
+        }
+    }
+
+    private static Identifier skillIconForSkill(int skill) {
+        return switch (skill) {
+            case LeviathanSkillSelection.THROW -> THROW_ICON;
+            case LeviathanSkillSelection.IMBUE -> IMBUE_ICON;
+            case LeviathanSkillSelection.ICE_SPIKES -> ICE_SPIKES_ICON;
+            default -> null;
+        };
+    }
+
+    private static void drawSkillIcon(GuiGraphicsExtractor g, Identifier icon, int x, int y) {
+        if (icon == null) return;
+        int iconOffset = SKILL_ICON_SIZE / 2;
+        g.blit(RenderPipelines.GUI_TEXTURED, icon, x - iconOffset, y - iconOffset, 0.0F, 0.0F,
+                SKILL_ICON_SIZE, SKILL_ICON_SIZE, 16, 16, 16, 16);
     }
 
     private void drawDetails(GuiGraphicsExtractor g, Layout l) {
@@ -237,12 +394,22 @@ public final class LeviathanSkillScreen extends Screen {
     @Override
     public boolean mouseClicked(MouseButtonEvent e, boolean dbl) {
         if (e.button() != 0) return super.mouseClicked(e, dbl);
-        Layout l = layout(); int y = l.y + 61;
-        for (ForgeWeaponSnapshot w : weapons) {
-            if (e.x() >= l.x + 9 && e.x() <= l.railRight - 8 && e.y() >= y && e.y() <= y + 70) {
-                ClientPacketDistributor.sendToServer(new SelectForgeWeaponPayload(sessionId, w.weaponId())); return true;
+        Layout l = layout();
+        prepareWeaponScroll(l);
+        int top = weaponViewportTop(l), bottom = weaponViewportBottom(l);
+        if (e.x() >= l.x + 5 && e.x() < l.railRight && e.y() >= top && e.y() < bottom) {
+            int scroll = Mth.floor(weaponScroll);
+            for (int i = 0; i < weapons.size(); i++) {
+                int y = top + i * WEAPON_ROW_STRIDE - scroll;
+                if (e.x() >= l.x + 9 && e.x() < l.railRight - 8
+                        && e.y() >= y && e.y() < y + WEAPON_CARD_HEIGHT) {
+                    ForgeWeaponSnapshot weapon = weapons.get(i);
+                    ClientPacketDistributor.sendToServer(
+                            new SelectForgeWeaponPayload(sessionId, weapon.weaponId()));
+                    return true;
+                }
             }
-            y += 78;
+            return true;
         }
         if (selected() == null) return true;
         int center = (l.railRight + l.right()) / 2, tabY = l.y + 46, gap = Math.min(92, (l.right() - l.railRight) / 4);
@@ -264,22 +431,47 @@ public final class LeviathanSkillScreen extends Screen {
     }
 
     private boolean clickLoadout(MouseButtonEvent e, Layout l) {
-        int cx = (l.railRight + l.right()) / 2, cy = l.y + 120;
-        if (nodeAt(e.x(), e.y(), cx - 84, cy)) { selectedLoadoutSlot = 1; return true; }
-        if (nodeAt(e.x(), e.y(), cx + 84, cy)) { selectedLoadoutSlot = 2; return true; }
-        int y = cy + 75;
-        if (nodeAt(e.x(), e.y(), cx - 72, y)) return equip(3);
-        if (nodeAt(e.x(), e.y(), cx, y)) return equip(1);
-        if (nodeAt(e.x(), e.y(), cx + 72, y)) return equip(2);
+        TreeViewport viewport = treeViewport(l);
+        if (!viewport.contains(e.x(), e.y())) return false;
+        LoadoutLayout loadout = loadoutLayout(l);
+        if (nodeAt(e.x(), e.y(), loadout.centerX - loadout.slotOffset, loadout.slotY)) {
+            selectedLoadoutSlot = 1;
+            return true;
+        }
+        if (nodeAt(e.x(), e.y(), loadout.centerX + loadout.slotOffset, loadout.slotY)) {
+            selectedLoadoutSlot = 2;
+            return true;
+        }
+        if (nodeAt(e.x(), e.y(), loadout.centerX - loadout.runeOffset, loadout.runeY)) return equip(3);
+        if (nodeAt(e.x(), e.y(), loadout.centerX, loadout.runeY)) return equip(1);
+        if (nodeAt(e.x(), e.y(), loadout.centerX + loadout.runeOffset, loadout.runeY)) return equip(2);
         return false;
     }
 
     @Override public boolean mouseDragged(MouseButtonEvent e, double dx, double dy) {
-        if (tab == Tab.PROGRESSION && e.button() == 0 && selected() != null) { treePanX = Mth.clamp(treePanX + dx, -135, 135); treePanY = Mth.clamp(treePanY + dy, -100, 100); return true; }
+        Layout l = layout();
+        if (tab == Tab.PROGRESSION && e.button() == 0 && selected() != null
+                && treeViewport(l).contains(e.x(), e.y())) {
+            treePanX = Mth.clamp(treePanX + dx, -135, 135);
+            treePanY = Mth.clamp(treePanY + dy, -100, 100);
+            return true;
+        }
         return super.mouseDragged(e, dx, dy);
     }
     @Override public boolean mouseScrolled(double x, double y, double sx, double sy) {
-        if (tab == Tab.PROGRESSION && selected() != null) { treePanX = Mth.clamp(treePanX + sx * 18, -135, 135); treePanY = Mth.clamp(treePanY + sy * 18, -100, 100); return true; }
+        Layout l = layout();
+        if (x >= l.x && x < l.railRight
+                && y >= weaponViewportTop(l) && y < weaponViewportBottom(l)) {
+            prepareWeaponScroll(l);
+            weaponScroll = Mth.clamp(weaponScroll - sy * WEAPON_SCROLL_STEP, 0.0D, maxWeaponScroll(l));
+            return true;
+        }
+        TreeViewport tree = treeViewport(l);
+        if (tab == Tab.PROGRESSION && selected() != null && tree.contains(x, y)) {
+            treePanX = Mth.clamp(treePanX + sx * 18, -135, 135);
+            treePanY = Mth.clamp(treePanY + sy * 18, -100, 100);
+            return true;
+        }
         return super.mouseScrolled(x, y, sx, sy);
     }
     @Override public boolean keyPressed(KeyEvent e) { if (e.isLeft() || e.isRight()) { tab = tab == Tab.PROGRESSION ? Tab.LOADOUT : Tab.PROGRESSION; return true; } if (e.isConfirmation() && tab == Tab.PROGRESSION) { unlockSelected(); return true; } return super.keyPressed(e); }
@@ -308,6 +500,20 @@ public final class LeviathanSkillScreen extends Screen {
     private void playConfirm() { if (minecraft.player != null) minecraft.player.playSound(SoundEvents.AMETHYST_BLOCK_RESONATE, .6F, .85F); }
     private static boolean nodeAt(double mx, double my, int x, int y) { return Math.abs(mx - x) + Math.abs(my - y) <= 21; }
 
+    private LoadoutLayout loadoutLayout(Layout l) {
+        TreeViewport viewport = treeViewport(l);
+        int centerX = viewport.centerX();
+        int availableHeight = Math.max(1, viewport.bottom - viewport.top);
+        boolean compact = availableHeight < 210;
+        int slotY = compact ? viewport.top + Math.max(32, availableHeight * 35 / 100) : l.y + 120;
+        int runeY = compact ? viewport.bottom - 27 : slotY + 75;
+        int halfWidth = Math.max(1, (viewport.right - viewport.left) / 2);
+        int slotOffset = Math.min(84, Math.max(42, halfWidth - 31));
+        int runeOffset = Math.min(72, Math.max(36, halfWidth - 25));
+        return new LoadoutLayout(centerX, slotY, runeY, slotOffset, runeOffset,
+                compact, availableHeight >= 115);
+    }
+
     private Layout layout() { int w = Math.min(720, Math.max(260, width - 20)), h = Math.min(400, Math.max(190, height - 12)); w = Math.min(w, width - 8); h = Math.min(h, height - 8); int x = (width - w) / 2, y = (height - h) / 2; int rail = Math.min(132, Math.max(100, w / 5)); int detail = Math.min(76, Math.max(62, h / 4)); return new Layout(x, y, w, h, x + rail, y + h - detail); }
     private TreeViewport treeViewport(Layout l) { return new TreeViewport(l.railRight + 5, l.y + 66, l.right() - 5, l.contentBottom - 5); }
     private static void diamond(GuiGraphicsExtractor g, int x, int y, int r, int c) { for (int o = -r; o <= r; o++) { int hw = r - Math.abs(o); g.horizontalLine(x - hw, x + hw, y + o, c); } }
@@ -321,5 +527,7 @@ public final class LeviathanSkillScreen extends Screen {
 
     private enum Tab { PROGRESSION("screen.wotn.mastery.tab.progression"), LOADOUT("screen.wotn.mastery.tab.loadout"); private final String key; Tab(String key) { this.key = key; } }
     private record Layout(int x, int y, int width, int height, int railRight, int contentBottom) { int right(){return x+width;} int bottom(){return y+height;} }
+    private record LoadoutLayout(int centerX, int slotY, int runeY, int slotOffset, int runeOffset,
+            boolean compact, boolean showPreview) {}
     private record TreeViewport(int left,int top,int right,int bottom){int centerX(){return(left+right)/2;}int centerY(){return(top+bottom)/2;}boolean contains(double x,double y){return x>=left&&x<=right&&y>=top&&y<=bottom;}}
 }

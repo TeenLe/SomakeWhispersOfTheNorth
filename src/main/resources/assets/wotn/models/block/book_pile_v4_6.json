@@ -1,0 +1,9 @@
+{
+  "parent": "wotn:block/book_pile_v4",
+  "textures": {
+    "1": "wotn:block/books/light_blue_book",
+    "2": "wotn:block/books/black_book",
+    "3": "wotn:block/books/light_gray_book",
+    "particle": "wotn:block/books/black_book"
+  }
+}

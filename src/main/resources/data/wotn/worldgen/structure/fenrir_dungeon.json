@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:jigsaw",
+  "biomes": "#wotn:has_structure/fenrir_dungeon",
+  "spawn_overrides": {},
+  "step": "surface_structures",
+  "terrain_adaptation": "none",
+  "start_pool": "wotn:fenrir_dungeon/start",
+  "size": 2,
+  "start_height": {
+    "absolute": -8
+  },
+  "project_start_to_heightmap": "WORLD_SURFACE_WG",
+  "start_jigsaw_name": "wotn:fenrir_dungeon/surface_anchor",
+  "use_expansion_hack": false,
+  "max_distance_from_center": {
+    "horizontal": 128,
+    "vertical": 128
+  },
+  "liquid_settings": "ignore_waterlogging"
+}

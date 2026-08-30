@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "wotn:block/alchemist_cauldron",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "wotn:block/alchemist_cauldron"
+    },
+    "facing=south": {
+      "model": "wotn:block/alchemist_cauldron",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "wotn:block/alchemist_cauldron",
+      "y": 270
+    }
+  }
+}

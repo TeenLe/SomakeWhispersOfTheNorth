@@ -10,6 +10,10 @@ public final class ModWoodTypes {
             new BlockSetType(WhispersOfTheNorth.MODID + ":yggdrasil"));
     public static final WoodType YGGDRASIL = WoodType.register(
             new WoodType(WhispersOfTheNorth.MODID + ":yggdrasil", YGGDRASIL_SET));
+    public static final BlockSetType IDUNN_SET = BlockSetType.register(
+            new BlockSetType(WhispersOfTheNorth.MODID + ":idunn"));
+    public static final WoodType IDUNN = WoodType.register(
+            new WoodType(WhispersOfTheNorth.MODID + ":idunn", IDUNN_SET));
 
     private ModWoodTypes() {
     }

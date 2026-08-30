@@ -6,9 +6,10 @@ import com.somake.wotn.skill.LeviathanImbueSkill;
 import com.somake.wotn.skilltree.LeviathanMastery;
 import com.somake.wotn.registry.ModEntities;
 import com.somake.wotn.registry.ModItems;
+import com.somake.wotn.particle.ParticleHelper;
 
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.DustColorTransitionOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -103,6 +104,10 @@ public class LeviathanAxeEntity extends ThrowableItemProjectile {
             this.level().addParticle(ParticleTypes.SNOWFLAKE, px, py, pz,
                     -movement.x * 0.035D, -movement.y * 0.035D, -movement.z * 0.035D);
             if ((this.tickCount & 1) == 0) {
+                ParticleHelper.spawnSnowflake(this.level(), ParticleHelper.SNOWFLAKE_TRAIL, px, py, pz,
+                        -movement.x * 0.025D, -movement.y * 0.025D, -movement.z * 0.025D);
+            }
+            if ((this.tickCount & 1) == 0) {
                 this.level().addParticle(new DustColorTransitionOptions(0x39DFFC, 0xE8FDFF, 0.7F),
                         px, py, pz, 0.0D, 0.0D, 0.0D);
             }
@@ -114,6 +119,11 @@ public class LeviathanAxeEntity extends ThrowableItemProjectile {
                     Vec3 point = this.position().add(tether.scale(i / (double) (samples + 1)));
                     this.level().addParticle(ParticleTypes.SNOWFLAKE, point.x, point.y, point.z,
                             tether.x * 0.002D, tether.y * 0.002D, tether.z * 0.002D);
+                    if ((i & 1) == 0) {
+                        ParticleHelper.spawnSnowflake(this.level(), ParticleHelper.SNOWFLAKE_TRAIL,
+                                point.x, point.y, point.z,
+                                tether.x * 0.0015D, tether.y * 0.0015D, tether.z * 0.0015D);
+                    }
                 }
             }
         }
@@ -238,6 +248,9 @@ public class LeviathanAxeEntity extends ThrowableItemProjectile {
             serverLevel.sendParticles(ParticleTypes.SNOWFLAKE,
                     owner.getX(), owner.getEyeY() - 0.35D, owner.getZ(),
                     9, 0.22D, 0.18D, 0.22D, 0.035D);
+            ParticleHelper.spawnSnowflakes(serverLevel, ParticleHelper.SNOWFLAKE_BURST,
+                    owner.getX(), owner.getEyeY() - 0.35D, owner.getZ(),
+                    3, 0.18D, 0.14D, 0.18D, 0.025D);
             this.playSound(SoundEvents.TRIDENT_RETURN, 0.55F, 1.25F);
             this.playSound(SoundEvents.ITEM_PICKUP, 0.7F, 0.8F);
         }

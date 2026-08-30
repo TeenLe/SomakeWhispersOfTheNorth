@@ -1,0 +1,55 @@
+{
+  "family": "jormungandr",
+  "tier": 3,
+  "result": "wotn:jormungandr_venom_tier_3",
+  "analysis_ticks": 6000,
+  "study_ingredients": [
+    {
+      "item": "wotn:jormungandr_venom_tier_2",
+      "count": 1
+    },
+    {
+      "item": "wotn:jormungandr_fang",
+      "count": 3
+    },
+    {
+      "item": "wotn:jormungandr_venom",
+      "count": 8
+    },
+    {
+      "item": "minecraft:fermented_spider_eye",
+      "count": 12
+    },
+    {
+      "item": "minecraft:glowstone_dust",
+      "count": 15
+    }
+  ],
+  "brewing_ingredients": [
+    {
+      "item": "minecraft:potion",
+      "components": {
+        "minecraft:potion_contents": "minecraft:strong_poison"
+      },
+      "count": 1
+    },
+    {
+      "item": "wotn:jormungandr_fang",
+      "count": 1
+    },
+    {
+      "item": "minecraft:glowstone_dust",
+      "count": 1
+    },
+    {
+      "item": "wotn:jormungandr_venom",
+      "count": 1
+    }
+  ],
+  "prerequisite": "wotn:jormungandr_venom_tier_2",
+  "hidden_title": "screen.wotn.alchemy.hidden.jormungandr.3",
+  "hint": "screen.wotn.alchemy.hint.jormungandr.3",
+  "description": "screen.wotn.alchemy.description.jormungandr",
+  "role": "screen.wotn.alchemy.role.offense",
+  "beneficial": false
+}

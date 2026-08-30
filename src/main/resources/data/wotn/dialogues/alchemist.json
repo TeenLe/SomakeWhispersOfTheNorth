@@ -1,0 +1,42 @@
+{
+  "speaker": "dialogue.wotn.alchemist.name",
+  "role": "dialogue.wotn.alchemist.role",
+  "start": "greeting",
+  "nodes": {
+    "greeting": {
+      "text": "dialogue.wotn.alchemist.greeting",
+      "responses": [
+        {
+          "id": "open_alchemy",
+          "text": "dialogue.wotn.alchemist.open_alchemy",
+          "action": "open_alchemy"
+        },
+        {
+          "id": "research",
+          "text": "dialogue.wotn.alchemist.ask_research",
+          "next": "research"
+        },
+        {
+          "id": "goodbye",
+          "text": "dialogue.wotn.common.goodbye",
+          "action": "close"
+        }
+      ]
+    },
+    "research": {
+      "text": "dialogue.wotn.alchemist.research",
+      "responses": [
+        {
+          "id": "open_alchemy",
+          "text": "dialogue.wotn.alchemist.open_alchemy",
+          "action": "open_alchemy"
+        },
+        {
+          "id": "back",
+          "text": "dialogue.wotn.common.back",
+          "next": "greeting"
+        }
+      ]
+    }
+  }
+}

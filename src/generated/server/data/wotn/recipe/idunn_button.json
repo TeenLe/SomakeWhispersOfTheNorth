@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    "wotn:idunn_planks"
+  ],
+  "result": {
+    "id": "wotn:idunn_button"
+  }
+}

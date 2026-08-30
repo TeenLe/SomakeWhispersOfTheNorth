@@ -3,6 +3,7 @@ package com.somake.wotn.registry;
 import com.mojang.serialization.Codec;
 import com.somake.wotn.WhispersOfTheNorth;
 import com.somake.wotn.skilltree.WeaponSkillProgress;
+import com.somake.wotn.alchemy.AlchemyPotionConfiguration;
 import java.util.UUID;
 import net.minecraft.core.UUIDUtil;
 
@@ -39,6 +40,11 @@ public final class ModDataComponents {
                             .networkSynchronized(net.minecraft.network.codec.StreamCodec.of(
                                     (net.minecraft.network.RegistryFriendlyByteBuf buf, UUID value) -> buf.writeUUID(value),
                                     (net.minecraft.network.RegistryFriendlyByteBuf buf) -> buf.readUUID())));
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<AlchemyPotionConfiguration>>
+            ALCHEMY_CONFIGURATION = COMPONENTS.registerComponentType("niflheim_configuration",
+                    builder -> builder.persistent(AlchemyPotionConfiguration.CODEC)
+                            .networkSynchronized(AlchemyPotionConfiguration.STREAM_CODEC));
 
     private ModDataComponents() {
     }

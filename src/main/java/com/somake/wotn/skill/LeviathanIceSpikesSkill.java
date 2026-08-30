@@ -10,6 +10,7 @@ import com.somake.wotn.registry.ModDataComponents;
 import com.somake.wotn.skilltree.LeviathanSkillTree;
 import com.somake.wotn.skilltree.WeaponSkillData;
 import com.somake.wotn.registry.ModSounds;
+import com.somake.wotn.particle.ParticleHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +50,7 @@ public final class LeviathanIceSpikesSkill {
             {6.0D, -1.5D, 0.0D, 1.5D},
             {8.0D, -2.25D, -0.75D, 0.75D, 2.25D}
     };
+    private static final float[] ROW_SCALES = {0.72F, 0.88F, 1.04F, 1.20F};
 
     public static void activate(ServerPlayer player) {
         ServerLevel level = (ServerLevel) player.level();
@@ -157,7 +159,8 @@ public final class LeviathanIceSpikesSkill {
                             level.getBlockState(net.minecraft.core.BlockPos.containing(groundImpact).below())),
                     groundImpact.x, groundImpact.y + 0.08D, groundImpact.z,
                     12, 0.38D, 0.15D, 0.38D, 0.12D);
-            level.sendParticles(ParticleTypes.SNOWFLAKE, groundImpact.x, groundImpact.y + 0.12D, groundImpact.z,
+            ParticleHelper.spawnLayeredSnowflakes(level, ParticleHelper.SNOWFLAKE_BURST, 0.34F,
+                    groundImpact.x, groundImpact.y + 0.12D, groundImpact.z,
                     18, 0.45D, 0.22D, 0.45D, 0.1D);
         }
     }
@@ -186,8 +189,9 @@ public final class LeviathanIceSpikesSkill {
                 double side = ROWS[row][column];
                 Vec3 desired = center.add(right.scale(side));
                 Vec3 surface = Math.abs(side) < 0.01D ? centerSurface : findSurface(level, player, desired, referenceY);
-                if (surface != null) placements.add(new SpikePlacement(surface, row * 2,
-                        0.86F + level.getRandom().nextFloat() * 0.28F));
+                if (surface != null) {
+                    placements.add(new SpikePlacement(surface, row * 2, ROW_SCALES[row]));
+                }
             }
         }
         return placements;
@@ -202,13 +206,14 @@ public final class LeviathanIceSpikesSkill {
                 || level.getBlockState(hit.getBlockPos()).getCollisionShape(level, hit.getBlockPos()).isEmpty()) return null;
         Vec3 surface = hit.getLocation();
         if (Math.abs(surface.y - referenceY) > 2.25D) return null;
-        AABB visualSpace = new AABB(surface.x - 0.34D, surface.y + 0.05D, surface.z - 0.34D,
-                surface.x + 0.34D, surface.y + 2.5D, surface.z + 0.34D);
+        AABB visualSpace = new AABB(surface.x - 0.95D, surface.y + 0.05D, surface.z - 0.95D,
+                surface.x + 0.95D, surface.y + 3.2D, surface.z + 0.95D);
         return level.noCollision(player, visualSpace) ? surface : null;
     }
 
     private static void spawnRowEffects(ServerLevel level, SpikePlacement placement) {
-        level.sendParticles(ParticleTypes.SNOWFLAKE, placement.position.x, placement.position.y + 0.15D,
+        ParticleHelper.spawnLayeredSnowflakes(level, ParticleHelper.SNOWFLAKE_BURST, 0.4F,
+                placement.position.x, placement.position.y + 0.15D,
                 placement.position.z, 5, 0.3D, 0.18D, 0.3D, 0.07D);
         level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.ICE.defaultBlockState()),
                 placement.position.x, placement.position.y + 0.08D, placement.position.z,

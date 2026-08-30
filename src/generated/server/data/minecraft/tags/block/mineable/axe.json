@@ -6,12 +6,26 @@
     "wotn:stripped_yggdrasil_wood",
     "wotn:yggdrasil_planks",
     "wotn:yggdrasil_stairs",
+    "wotn:book_pile",
     "wotn:yggdrasil_slab",
     "wotn:yggdrasil_fence",
     "wotn:yggdrasil_fence_gate",
     "wotn:yggdrasil_door",
     "wotn:yggdrasil_trapdoor",
     "wotn:yggdrasil_pressure_plate",
-    "wotn:yggdrasil_button"
+    "wotn:yggdrasil_button",
+    "wotn:idunn_log",
+    "wotn:idunn_wood",
+    "wotn:stripped_idunn_log",
+    "wotn:stripped_idunn_wood",
+    "wotn:idunn_planks",
+    "wotn:idunn_stairs",
+    "wotn:idunn_slab",
+    "wotn:idunn_fence",
+    "wotn:idunn_fence_gate",
+    "wotn:idunn_door",
+    "wotn:idunn_trapdoor",
+    "wotn:idunn_pressure_plate",
+    "wotn:idunn_button"
   ]
 }

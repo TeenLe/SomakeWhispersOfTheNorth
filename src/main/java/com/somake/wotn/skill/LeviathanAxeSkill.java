@@ -31,7 +31,7 @@ public final class LeviathanAxeSkill {
             READY_AT.remove(player.getUUID());
         }
         if (now < readyAt) {
-            sync(player, (int) Math.min(Integer.MAX_VALUE, readyAt - now));
+            sync(player, (int) Math.min(Integer.MAX_VALUE, readyAt - now), true);
             return;
         }
         if (hand == null || !player.isAlive() || player.isSpectator()) {
@@ -52,7 +52,7 @@ public final class LeviathanAxeSkill {
         player.swing(hand, true);
 
         READY_AT.put(player.getUUID(), now + COOLDOWN_TICKS);
-        sync(player, COOLDOWN_TICKS);
+        sync(player, COOLDOWN_TICKS, false);
     }
 
     private static boolean isEquipped(ItemStack axe, int skillId) {
@@ -67,8 +67,9 @@ public final class LeviathanAxeSkill {
         return player.getOffhandItem().is(ModItems.LEVIATHAN_AXE.get()) ? InteractionHand.OFF_HAND : null;
     }
 
-    private static void sync(ServerPlayer player, int remainingTicks) {
-        PacketDistributor.sendToPlayer(player, new LeviathanAxeCooldownPayload(remainingTicks, COOLDOWN_TICKS));
+    private static void sync(ServerPlayer player, int remainingTicks, boolean denied) {
+        PacketDistributor.sendToPlayer(player,
+                new LeviathanAxeCooldownPayload(remainingTicks, COOLDOWN_TICKS, denied));
     }
 
     private LeviathanAxeSkill() {

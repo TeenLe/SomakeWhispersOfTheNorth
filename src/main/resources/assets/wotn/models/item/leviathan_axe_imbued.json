@@ -1,0 +1,8 @@
+{
+	"parent": "wotn:item/leviathan_axe",
+	"textures": {
+		"2": "wotn:item/leviathan_axe/leviathan_axe_anim",
+		"3": "wotn:item/leviathan_axe/leviathan_axe_imbued",
+		"particle": "wotn:item/leviathan_axe/leviathan_axe_anim"
+	}
+}

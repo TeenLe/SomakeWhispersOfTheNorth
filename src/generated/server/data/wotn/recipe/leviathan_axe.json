@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "D": "minecraft:diamond",
+    "I": "wotn:ice_bone",
+    "N": "minecraft:netherite_ingot",
+    "R": "#wotn:niflheim_runes",
+    "S": "minecraft:stick"
+  },
+  "pattern": [
+    "IDR",
+    " SN",
+    "S  "
+  ],
+  "result": {
+    "id": "wotn:leviathan_axe"
+  }
+}

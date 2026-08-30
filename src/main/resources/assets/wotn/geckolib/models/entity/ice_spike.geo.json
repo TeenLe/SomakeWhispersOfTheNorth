@@ -1,0 +1,61 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.ice_spike",
+				"texture_width": 128,
+				"texture_height": 128,
+				"visible_bounds_width": 5,
+				"visible_bounds_height": 6,
+				"visible_bounds_offset": [0, 1, 0]
+			},
+			"bones": [
+				{
+					"name": "Root",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "MainSpike",
+					"parent": "Root",
+					"pivot": [-1.61676, 18.05484, 2.30574],
+					"cubes": [
+						{"origin": [-5.61676, -1.44516, -1.69426], "size": [8, 39, 8], "pivot": [-1.61676, 18.05484, 2.30574], "rotation": [-4.5837, 0, -4.0107], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "RearLeftSpike",
+					"parent": "Root",
+					"pivot": [-4.37469, 7.19163, -4.03167],
+					"cubes": [
+						{"origin": [-6.87469, -1.30837, -6.53167], "size": [5, 17, 5], "pivot": [-4.37469, 7.19163, -4.03167], "rotation": [24.288, 43.8663, 1.4683], "uv": [0, 47]}
+					]
+				},
+				{
+					"name": "RearRightSpike",
+					"parent": "Root",
+					"pivot": [1.9, 0, -1.6],
+					"cubes": [
+						{"origin": [0, 0.1, -4.7], "size": [5, 11, 5], "pivot": [1.9, 0, -1.6], "rotation": [29.8087, -39.604, -9.7477], "uv": [20, 49]}
+					]
+				},
+				{
+					"name": "FrontRightSpike",
+					"parent": "Root",
+					"pivot": [2.7, -1, 2.8],
+					"cubes": [
+						{"origin": [-0.65, -0.85, -0.55], "size": [5, 23, 5], "pivot": [2.7, -1, 2.8], "rotation": [-20.18461, 27.75509, 8.79557], "uv": [32, 0]}
+					]
+				},
+				{
+					"name": "FrontLeftSpike",
+					"parent": "Root",
+					"pivot": [-3, -1.6, 3.3],
+					"cubes": [
+						{"origin": [-4.65, -1.45, -0.05], "size": [6, 15, 6], "pivot": [-3, -1.6, 3.3], "rotation": [-14.82502, -30.77322, -19.73042], "uv": [32, 28]}
+					]
+				}
+			]
+		}
+	]
+}

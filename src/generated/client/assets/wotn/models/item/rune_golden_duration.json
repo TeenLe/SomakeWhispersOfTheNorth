@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "wotn:item/runes/idunn_1_slot"
+  }
+}

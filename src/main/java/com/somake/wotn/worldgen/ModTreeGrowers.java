@@ -10,6 +10,11 @@ public final class ModTreeGrowers {
             Optional.empty(),
             Optional.of(ModConfiguredFeatures.YGGDRASIL_TREE),
             Optional.empty());
+    public static final TreeGrower IDUNN = new TreeGrower(
+            "wotn:idunn",
+            Optional.of(ModConfiguredFeatures.IDUNN_MEGA_TREE),
+            Optional.of(ModConfiguredFeatures.IDUNN_TREE),
+            Optional.empty());
 
     private ModTreeGrowers() {
     }

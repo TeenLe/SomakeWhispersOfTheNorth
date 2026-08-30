@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "wotn:item/potions/jormungandr_venom_tier_2"
+  }
+}

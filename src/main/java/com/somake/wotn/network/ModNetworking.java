@@ -10,13 +10,14 @@ import com.somake.wotn.registry.ModItems;
 import com.somake.wotn.skilltree.LeviathanSkillTree;
 import com.somake.wotn.dialogue.DialogueManager;
 import com.somake.wotn.skilltree.ForgeSessionManager;
+import com.somake.wotn.alchemy.AlchemyManager;
 
 public final class ModNetworking {
     private ModNetworking() {
     }
 
     public static void register(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar("1");
+        PayloadRegistrar registrar = event.registrar("3");
         registrar.playToClient(CameraShakePayload.TYPE, CameraShakePayload.STREAM_CODEC);
         registrar.playToClient(LeviathanAxeCooldownPayload.TYPE, LeviathanAxeCooldownPayload.STREAM_CODEC);
         registrar.playToClient(LeviathanImbueStatePayload.TYPE, LeviathanImbueStatePayload.STREAM_CODEC);
@@ -26,6 +27,8 @@ public final class ModNetworking {
         registrar.playToClient(UpdateForgeSessionPayload.TYPE, UpdateForgeSessionPayload.STREAM_CODEC);
         registrar.playToClient(ShowDialoguePayload.TYPE, ShowDialoguePayload.STREAM_CODEC);
         registrar.playToClient(CloseDialoguePayload.TYPE, CloseDialoguePayload.STREAM_CODEC);
+        registrar.playToClient(OpenAlchemyPayload.TYPE, OpenAlchemyPayload.STREAM_CODEC);
+        registrar.playToClient(UpdateAlchemyPayload.TYPE, UpdateAlchemyPayload.STREAM_CODEC);
         registrar.playToServer(ActivateLeviathanSlotPayload.TYPE, ActivateLeviathanSlotPayload.STREAM_CODEC,
                 (payload, context) -> {
                     if (payload.slot() != 1 && payload.slot() != 2) return;
@@ -66,6 +69,17 @@ public final class ModNetworking {
                         payload.sessionId(), payload.responseId()));
         registrar.playToServer(CloseDialogueRequestPayload.TYPE, CloseDialogueRequestPayload.STREAM_CODEC,
                 (payload, context) -> DialogueManager.INSTANCE.close(
+                        (net.minecraft.server.level.ServerPlayer) context.player(), payload.sessionId()));
+        registrar.playToServer(SelectAlchemyFormulaPayload.TYPE, SelectAlchemyFormulaPayload.STREAM_CODEC,
+                (payload, context) -> AlchemyManager.INSTANCE.select(
+                        (net.minecraft.server.level.ServerPlayer) context.player(),
+                        payload.sessionId(), payload.formulaId()));
+        registrar.playToServer(AlchemyActionPayload.TYPE, AlchemyActionPayload.STREAM_CODEC,
+                (payload, context) -> AlchemyManager.INSTANCE.act(
+                        (net.minecraft.server.level.ServerPlayer) context.player(),
+                        payload.sessionId(), payload.formulaId(), payload.itemId(), payload.action()));
+        registrar.playToServer(CloseAlchemySessionPayload.TYPE, CloseAlchemySessionPayload.STREAM_CODEC,
+                (payload, context) -> AlchemyManager.INSTANCE.close(
                         (net.minecraft.server.level.ServerPlayer) context.player(), payload.sessionId()));
     }
 }

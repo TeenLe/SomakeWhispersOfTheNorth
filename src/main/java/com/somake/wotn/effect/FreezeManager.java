@@ -18,14 +18,22 @@ public final class FreezeManager {
     public static final float SOUND_VOLUME = 0.28F;
     private static final Map<LivingEntity, FrozenState> FROZEN_STATES = new WeakHashMap<>();
 
-    public static void freeze(LivingEntity target, LivingEntity source) {
+    public static boolean freeze(LivingEntity target, LivingEntity source) {
+        return freeze(target, source, DEFAULT_DURATION_TICKS);
+    }
+
+    public static boolean freeze(LivingEntity target, LivingEntity source, int durationTicks) {
         if (target.level().isClientSide() || !target.isAlive()) {
-            return;
+            return false;
         }
 
-        boolean newlyFrozen = !FROZEN_STATES.containsKey(target);
+        boolean newlyFrozen = !isFrozen(target);
+        target.addEffect(new MobEffectInstance(ModEffects.FROZEN, Math.max(1, durationTicks),
+                0, false, false, false), source);
+        if (!isFrozen(target)) {
+            return false;
+        }
         FROZEN_STATES.computeIfAbsent(target, ignored -> FrozenState.capture(target));
-        target.addEffect(new MobEffectInstance(ModEffects.FROZEN, DEFAULT_DURATION_TICKS, 0, false, false, false), source);
         if (newlyFrozen) {
             target.level().playSound(null, target.getX(), target.getY(), target.getZ(),
                     com.somake.wotn.registry.ModSounds.FREEZE.get(), SoundSource.HOSTILE, SOUND_VOLUME, 0.9F);
@@ -34,6 +42,7 @@ public final class FreezeManager {
             }
         }
         lock(target);
+        return true;
     }
 
     public static void onEntityTickPre(EntityTickEvent.Pre event) {
@@ -61,7 +70,7 @@ public final class FreezeManager {
         }
     }
 
-    private static boolean isFrozen(LivingEntity living) {
+    public static boolean isFrozen(LivingEntity living) {
         return living.hasEffect(ModEffects.FROZEN);
     }
 
@@ -89,6 +98,7 @@ public final class FreezeManager {
             return;
         }
 
+        living.setPos(state.position.x, state.position.y, state.position.z);
         living.setDeltaMovement(Vec3.ZERO);
         living.setTicksFrozen(0);
         living.setSpeed(state.speed);

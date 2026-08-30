@@ -1,69 +1,95 @@
 package com.somake.wotn.client.renderer;
 
+import com.geckolib.renderer.GeoEntityRenderer;
+import com.geckolib.renderer.base.RenderPassInfo;
+import com.geckolib.renderer.base.GeoRenderState;
+import com.geckolib.constant.DataTickets;
+import com.geckolib.constant.dataticket.DataTicket;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import com.somake.wotn.WhispersOfTheNorth;
 import com.somake.wotn.client.model.IceSpikeModel;
-import com.somake.wotn.client.renderer.state.IceSpikeRenderState;
 import com.somake.wotn.entity.IceSpikeEntity;
 
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier;
-import net.minecraft.util.Mth;
-import net.minecraft.util.Unit;
+import net.minecraft.world.phys.AABB;
 
-public class IceSpikeRenderer extends EntityRenderer<IceSpikeEntity, IceSpikeRenderState> {
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(
-            WhispersOfTheNorth.MODID, "textures/entity/ice.png");
-    private final IceSpikeModel model;
+@SuppressWarnings({"rawtypes", "unchecked"})
+public class IceSpikeRenderer extends GeoEntityRenderer<IceSpikeEntity, EntityRenderState> {
+    private static final DataTicket<Float> VISUAL_SCALE = DataTickets.create(
+            "wotn_ice_spike_visual_scale", Float.class);
+    private static final DataTicket<Boolean> ACTIVE = DataTickets.create(
+            "wotn_ice_spike_active", Boolean.class);
+    private static final DataTicket<Float> YAW = DataTickets.create(
+            "wotn_ice_spike_yaw", Float.class);
+    private static final DataTicket<Float> TWIST = DataTickets.create(
+            "wotn_ice_spike_twist", Float.class);
+    private static final DataTicket<Float> LEAN = DataTickets.create(
+            "wotn_ice_spike_lean", Float.class);
 
     public IceSpikeRenderer(EntityRendererProvider.Context context) {
-        super(context);
-        this.model = new IceSpikeModel(context.bakeLayer(IceSpikeModel.LAYER_LOCATION));
+        super(context, new IceSpikeModel());
         this.shadowRadius = 0.0F;
     }
 
     @Override
-    public void submit(IceSpikeRenderState state, PoseStack poseStack, SubmitNodeCollector collector,
+    public RenderType getRenderType(EntityRenderState state, net.minecraft.resources.Identifier texture) {
+        return net.minecraft.client.renderer.rendertype.RenderTypes.entityTranslucentEmissive(texture);
+    }
+
+    @Override
+    public int getRenderColor(IceSpikeEntity entity, Void relatedObject, float partialTick) {
+        return 0xFFE9FCFF;
+    }
+
+    @Override
+    public void submit(EntityRenderState state, PoseStack poseStack, SubmitNodeCollector collector,
             CameraRenderState camera) {
-        if (state.alpha <= 0.0F || state.visualScale <= 0.01F) return;
-        poseStack.pushPose();
-        poseStack.translate(0.0F, state.yOffset, 0.0F);
-        poseStack.mulPose(Axis.YP.rotationDegrees(state.yaw + state.twist));
-        poseStack.mulPose(Axis.ZP.rotationDegrees(state.lean));
-        poseStack.scale(-state.visualScale, -state.visualScale, state.visualScale);
-        poseStack.translate(0.0F, -1.5F, 0.0F);
-        int alpha = Mth.clamp((int) (220.0F * state.alpha), 0, 255);
-        collector.submitModel(this.model, Unit.INSTANCE, poseStack, this.model.renderType(TEXTURE),
-                state.lightCoords, OverlayTexture.NO_OVERLAY, (alpha << 24) | 0xE9FCFF,
-                null, state.outlineColor, null);
-        poseStack.popPose();
-        super.submit(state, poseStack, collector, camera);
+        if (geckoState(state).getOrDefaultGeckolibData(ACTIVE, true)) {
+            super.submit(state, poseStack, collector, camera);
+        }
     }
 
     @Override
-    public IceSpikeRenderState createRenderState() {
-        return new IceSpikeRenderState();
+    public void scaleModelForRender(RenderPassInfo renderPass, float widthScale,
+            float heightScale) {
+        PoseStack poseStack = renderPass.poseStack();
+        float scale = (float) renderPass.getOrDefaultGeckolibData(VISUAL_SCALE, 1.0F);
+        poseStack.scale(scale, scale, scale);
     }
 
     @Override
-    public void extractRenderState(IceSpikeEntity entity, IceSpikeRenderState state, float partialTick) {
-        super.extractRenderState(entity, state, partialTick);
+    protected void applyRotations(RenderPassInfo renderPass, PoseStack poseStack,
+            float nativeScale) {
+        float yaw = (float) renderPass.getOrDefaultGeckolibData(YAW, 0.0F);
+        float twist = (float) renderPass.getOrDefaultGeckolibData(TWIST, 0.0F);
+        float lean = (float) renderPass.getOrDefaultGeckolibData(LEAN, 0.0F);
+        poseStack.mulPose(Axis.YP.rotationDegrees(yaw + twist));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(lean));
+    }
+
+    @Override
+    public void addRenderData(IceSpikeEntity entity, Void relatedObject, EntityRenderState state,
+            float partialTick) {
         float age = entity.tickCount + partialTick - entity.getEmergenceDelay();
-        float emerge = Mth.clamp(age / IceSpikeEntity.EMERGE_TICKS, 0.0F, 1.0F);
-        float endStart = IceSpikeEntity.EMERGE_TICKS + IceSpikeEntity.HOLD_TICKS;
-        float shatter = Mth.clamp((age - endStart) / IceSpikeEntity.SHATTER_TICKS, 0.0F, 1.0F);
-        float eased = 1.0F - (1.0F - emerge) * (1.0F - emerge) * (1.0F - emerge);
-        float overshoot = emerge < 1.0F ? Mth.sin(emerge * Mth.PI) * 0.09F : 0.0F;
-        state.visualScale = entity.getVisualScale() * (eased + overshoot) * (1.0F - shatter * 0.25F);
-        state.yOffset = Mth.lerp(eased, -2.2F * entity.getVisualScale(), 0.0F) - shatter * 0.45F;
-        state.alpha = age < 0.0F ? 0.0F : Mth.clamp(1.0F - shatter, 0.0F, 1.0F);
-        state.yaw = entity.getYRot();
-        state.twist = Math.floorMod(entity.getVariantSeed(), 360);
-        state.lean = (Math.floorMod(entity.getVariantSeed(), 11) - 5) * 0.9F;
+        GeoRenderState geoState = geckoState(state);
+        geoState.addGeckolibData(ACTIVE, age >= 0.0F);
+        geoState.addGeckolibData(VISUAL_SCALE, entity.getVisualScale());
+        geoState.addGeckolibData(YAW, entity.getYRot());
+        geoState.addGeckolibData(TWIST, (float) Math.floorMod(entity.getVariantSeed(), 360));
+        geoState.addGeckolibData(LEAN, (Math.floorMod(entity.getVariantSeed(), 11) - 5) * 0.9F);
+    }
+
+    private static GeoRenderState geckoState(EntityRenderState state) {
+        return (GeoRenderState) (Object) state;
+    }
+
+    @Override
+    protected AABB getBoundingBoxForCulling(IceSpikeEntity entity) {
+        float scale = Math.max(1.0F, entity.getVisualScale());
+        return entity.getBoundingBox().inflate(3.5D * scale, 3.5D * scale, 3.5D * scale);
     }
 }

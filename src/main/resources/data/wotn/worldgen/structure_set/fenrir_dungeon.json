@@ -1,0 +1,15 @@
+{
+  "structures": [
+    {
+      "structure": "wotn:fenrir_dungeon",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 64,
+    "separation": 32,
+    "salt": 159263971,
+    "spread_type": "triangular"
+  }
+}

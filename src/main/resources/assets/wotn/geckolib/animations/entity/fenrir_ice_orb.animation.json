@@ -1,0 +1,22 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.fenrir_ice_orb.idle": {
+			"loop": true,
+			"animation_length": 1,
+			"bones": {
+				"Root": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"1.0": [360, 180, 360]
+					},
+					"scale": {
+						"0.0": [0.92, 0.92, 0.92],
+						"0.5": [1.08, 1.08, 1.08],
+						"1.0": [0.92, 0.92, 0.92]
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,6 +1,7 @@
 package com.somake.wotn.skilltree;
 
 import net.minecraft.ChatFormatting;
+import com.somake.wotn.particle.ParticleHelper;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -53,6 +54,9 @@ public final class LeviathanMastery {
                 false, false,
                 player.getX(), player.getY() + 1.0D, player.getZ(),
                 28, 0.5D, 0.8D, 0.5D, 0.08D);
+        ParticleHelper.spawnSnowflakesForPlayer(player, ParticleHelper.SNOWFLAKE_BURST,
+                player.getX(), player.getY() + 1.0D, player.getZ(),
+                8, 0.42D, 0.65D, 0.42D, 0.055D);
     }
 
     private LeviathanMastery() {

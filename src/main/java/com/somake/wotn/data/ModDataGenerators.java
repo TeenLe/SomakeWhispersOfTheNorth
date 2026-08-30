@@ -25,7 +25,11 @@ public final class ModDataGenerators {
         event.addProvider(new LootTableProvider(
                 event.getGenerator().getPackOutput(),
                 Set.of(),
-                List.of(new LootTableProvider.SubProviderEntry(ModBlockLootProvider::new, LootContextParamSets.BLOCK)),
+                List.of(
+                        new LootTableProvider.SubProviderEntry(ModBlockLootProvider::new, LootContextParamSets.BLOCK),
+                        new LootTableProvider.SubProviderEntry(
+                                ModBlockInteractLootProvider::new,
+                                LootContextParamSets.BLOCK_INTERACT)),
                 event.getLookupProvider()));
     }
 
