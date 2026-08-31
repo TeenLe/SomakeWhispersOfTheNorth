@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 public final class FireDraugrRenderer extends GeoEntityRenderer<FireDraugrEntity, LivingEntityRenderState> {
     public FireDraugrRenderer(EntityRendererProvider.Context context) {
         super(context, new FireDraugrModel());
-        withRenderLayer(new ItemInHandGeoLayer(context, this));
+        withRenderLayer(new ItemInHandGeoLayer(context, this, null, "LeftHandItem"));
         this.shadowRadius = 0.5F;
     }
 }

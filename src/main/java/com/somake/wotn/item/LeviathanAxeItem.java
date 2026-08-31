@@ -14,7 +14,7 @@ import net.minecraft.world.item.component.TooltipDisplay;
 
 public class LeviathanAxeItem extends AxeItem {
     public LeviathanAxeItem(ToolMaterial material, Properties properties) {
-        super(material, 6.0F, -3.0F, properties);
+        super(material, 7.0F, -2.8F, properties);
     }
 
     @Override

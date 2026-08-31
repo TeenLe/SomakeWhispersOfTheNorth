@@ -1,9 +1,7 @@
 {
   "replace": false,
   "values": [
-    "minecraft:grove",
-    "minecraft:snowy_slopes",
-    "minecraft:jagged_peaks",
-    "minecraft:frozen_peaks"
+    "minecraft:snowy_plains",
+    "minecraft:ice_spikes"
   ]
 }

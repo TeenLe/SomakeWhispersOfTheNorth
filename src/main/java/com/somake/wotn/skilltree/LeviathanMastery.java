@@ -16,6 +16,7 @@ import java.util.UUID;
 
 public final class LeviathanMastery {
     private static final long TARGET_REWARD_INTERVAL = 20L * 8L;
+    private static final int EXPERIENCE_MULTIPLIER = 2;
     private static final Map<UUID, Map<UUID, Long>> LAST_TARGET_REWARDS = new HashMap<>();
 
     public static void awardForHostileHit(ServerPlayer player, ItemStack weapon, LivingEntity target, int amount) {
@@ -30,7 +31,7 @@ public final class LeviathanMastery {
         if (playerRewards.size() > 64) {
             playerRewards.entrySet().removeIf(entry -> now - entry.getValue() > TARGET_REWARD_INTERVAL * 2L);
         }
-        award(player, weapon, amount);
+        award(player, weapon, amount * EXPERIENCE_MULTIPLIER);
     }
 
     public static void award(ServerPlayer player, ItemStack weapon, int amount) {

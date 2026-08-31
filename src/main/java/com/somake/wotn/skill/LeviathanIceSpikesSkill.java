@@ -40,7 +40,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 
 public final class LeviathanIceSpikesSkill {
-    public static final int COOLDOWN_TICKS = 20 * 2;
+    public static final int COOLDOWN_TICKS = 20 * 8;
     private static final int SLAM_IMPACT_TICK = 9;
     private static final Map<UUID, Long> READY_AT = new HashMap<>();
     private static final Map<UUID, PendingCast> PENDING_CASTS = new HashMap<>();

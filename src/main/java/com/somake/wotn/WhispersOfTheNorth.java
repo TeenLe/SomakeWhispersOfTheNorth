@@ -16,6 +16,7 @@ import com.somake.wotn.registry.ModAttachments;
 import com.somake.wotn.registry.ModAttributes;
 import com.somake.wotn.registry.ModCreativeTabs;
 import com.somake.wotn.registry.ModFeatures;
+import com.somake.wotn.registry.ModStructures;
 import com.somake.wotn.skill.LeviathanImbueSkill;
 import com.somake.wotn.skill.LeviathanIceSpikesSkill;
 import com.somake.wotn.command.WotnCommands;
@@ -50,6 +51,7 @@ public class WhispersOfTheNorth {
         ModEntities.ENTITY_TYPES.register(modEventBus);
         ModEffects.MOB_EFFECTS.register(modEventBus);
         ModFeatures.FEATURES.register(modEventBus);
+        ModStructures.STRUCTURE_TYPES.register(modEventBus);
         ModDataComponents.COMPONENTS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         ModCreativeTabs.TABS.register(modEventBus);

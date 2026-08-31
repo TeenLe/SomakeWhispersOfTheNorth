@@ -155,7 +155,10 @@ public class FenrirEntity extends Monster implements GeoEntity {
     private static final int ICE_ORB_COOLDOWN = 80;
     private static final int FROST_HOWL_COOLDOWN = 100;
     private static final double PHASE_TWO_HEALTH_RATIO = 0.6D;
-    private static final double SURFACE_HOLD_DISTANCE = 4.25D;
+    private static final double BITE_START_RANGE = 4.35D;
+    private static final double CLAWS_START_RANGE = 5.0D;
+    private static final double FROST_HOWL_START_RANGE = 8.0D;
+    private static final double GLACIAL_SLAM_START_RANGE = 10.0D;
     public static final float DEFAULT_MOUTH_FORWARD = 6.0F;
     public static final float DEFAULT_MOUTH_UP = 2.5F;
     public static final float DEFAULT_MOUTH_SIDE = 0.0F;
@@ -527,6 +530,28 @@ public class FenrirEntity extends Monster implements GeoEntity {
         } else {
             this.attackTicks = 0;
         }
+
+        if (!this.level().isClientSide()) {
+            this.stabilizeSurfaceChaseRotation();
+        }
+    }
+
+    private void stabilizeSurfaceChaseRotation() {
+        LivingEntity target = this.getTarget();
+        if (target == null || !target.isAlive() || !this.isSurfaceIdle()
+                || this.shouldEnterPhaseTwo()) {
+            return;
+        }
+        Vec3 offset = target.position().subtract(this.position());
+        if (offset.horizontalDistanceSqr() < 1.0E-4D) return;
+
+        float targetYaw = (float) (Mth.atan2(offset.z, offset.x) * Mth.RAD_TO_DEG) - 90.0F;
+        this.setYRot(targetYaw);
+        this.setYBodyRot(targetYaw);
+        this.setYHeadRot(targetYaw);
+        this.yRotO = targetYaw;
+        this.yBodyRotO = targetYaw;
+        this.yHeadRotO = targetYaw;
     }
 
     private void tickBurrowSkill() {
@@ -1777,16 +1802,6 @@ public class FenrirEntity extends Monster implements GeoEntity {
         }
     }
 
-    private boolean isFacingTarget(LivingEntity target, float maximumAngle) {
-        Vec3 forward = this.getHorizontalForward();
-        Vec3 offset = target.position().subtract(this.position());
-        Vec3 direction = new Vec3(offset.x, 0.0D, offset.z);
-        if (forward.horizontalDistanceSqr() < 1.0E-4D || direction.horizontalDistanceSqr() < 1.0E-4D) {
-            return true;
-        }
-        return forward.dot(direction.normalize()) >= Mth.cos(maximumAngle * Mth.DEG_TO_RAD);
-    }
-
     private Vec3 rotateProjectileYaw(Vec3 direction, double angle) {
         double cos = Math.cos(angle);
         double sin = Math.sin(angle);
@@ -2287,11 +2302,13 @@ public class FenrirEntity extends Monster implements GeoEntity {
             this.selectedAction = null;
             LivingEntity target = this.fenrir.getTarget();
             if (target == null || !target.isAlive() || !this.fenrir.isSurfaceIdle()
-                    || this.fenrir.shouldEnterPhaseTwo() || this.fenrir.globalSkillCooldown > 0) {
+                    || this.fenrir.shouldEnterPhaseTwo() || this.fenrir.globalSkillCooldown > 0
+                    || this.fenrir.skillSelectionDelay > 0) {
                 return false;
             }
 
-            double distance = Math.sqrt(this.fenrir.distanceToSqr(target));
+            double distance = Math.sqrt(this.fenrir.horizontalDistanceSqr(
+                    this.fenrir.position(), target.position()));
             boolean phaseTwo = this.fenrir.entityData.get(PHASE_TWO);
             this.selectedAction = this.drawNextAction(target, distance, phaseTwo);
             return this.selectedAction != null;
@@ -2385,11 +2402,14 @@ public class FenrirEntity extends Monster implements GeoEntity {
 
         private boolean canExecute(FenrirAction action, LivingEntity target, double distance, boolean phaseTwo) {
             return switch (action) {
-                case BITE, CLAWS -> distance <= 6.5D;
-                case ICE_ORB -> true;
-                case FROST_HOWL -> phaseTwo;
-                case GLACIAL_SLAM -> this.fenrir.onGround();
-                case BURROW -> this.fenrir.onGround();
+                case BITE -> this.fenrir.meleeCooldown <= 0 && distance <= BITE_START_RANGE;
+                case CLAWS -> this.fenrir.meleeCooldown <= 0 && distance <= CLAWS_START_RANGE;
+                case ICE_ORB -> this.fenrir.iceOrbCooldown <= 0;
+                case FROST_HOWL -> phaseTwo && this.fenrir.frostHowlCooldown <= 0
+                        && distance <= FROST_HOWL_START_RANGE;
+                case GLACIAL_SLAM -> this.fenrir.glacialSlamCooldown <= 0 && this.fenrir.onGround()
+                        && distance <= GLACIAL_SLAM_START_RANGE;
+                case BURROW -> this.fenrir.burrowCooldown <= 0 && this.fenrir.onGround();
             };
         }
     }
@@ -2416,6 +2436,11 @@ public class FenrirEntity extends Monster implements GeoEntity {
         }
 
         @Override
+        public boolean requiresUpdateEveryTick() {
+            return true;
+        }
+
+        @Override
         public void stop() {
             this.fenrir.getNavigation().stop();
             this.pathRecalculationDelay = 0;
@@ -2426,25 +2451,10 @@ public class FenrirEntity extends Monster implements GeoEntity {
             LivingEntity target = this.fenrir.getTarget();
             if (target == null) return;
             this.fenrir.getLookControl().setLookAt(target, 25.0F, 25.0F);
-            double distanceSqr = this.fenrir.distanceToSqr(target);
-            if (this.fenrir.globalSkillCooldown <= 0 && this.fenrir.iceOrbCooldown <= 0
-                    && distanceSqr >= Mth.square(6.0D) && distanceSqr <= Mth.square(34.0D)
-                    && !this.fenrir.isFacingTarget(target, 12.0F)) {
-                this.fenrir.getNavigation().stop();
-                this.fenrir.faceTargetHorizontally(target, 12.0F);
-                this.pathRecalculationDelay = 0;
-                return;
-            }
-            if (distanceSqr <= Mth.square(SURFACE_HOLD_DISTANCE)) {
-                this.fenrir.getNavigation().stop();
-                this.fenrir.faceTargetHorizontally(target, 12.0F);
-                this.pathRecalculationDelay = 0;
-                return;
-            }
             if (--this.pathRecalculationDelay <= 0 || this.fenrir.getNavigation().isDone()) {
                 this.pathRecalculationDelay = 8 + this.fenrir.getRandom().nextInt(5);
                 this.fenrir.getNavigation().moveTo(target,
-                        this.fenrir.entityData.get(PHASE_TWO) ? 1.28D : 1.15D);
+                        this.fenrir.entityData.get(PHASE_TWO) ? 1.33D : 1.20D);
             }
         }
     }

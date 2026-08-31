@@ -110,6 +110,7 @@ public final class ModRecipeProvider extends RecipeProvider {
                 .pattern("B")
                 .unlockedBy("has_book", has(Items.BOOK))
                 .save(output);
+
     }
 
     public static final class Runner extends RecipeProvider.Runner {
